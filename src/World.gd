@@ -108,8 +108,6 @@ func generate_terrain(dim):
 		for y in dim.y:
 
 			var v = Vector2(x, y)
-
-			# init celldata for position
 			celldata[v] = {}
 
 			# noise per tile
@@ -120,8 +118,8 @@ func generate_terrain(dim):
 				t = select_random_green_tile(v)
 
 			# Set Terrain Wrap
-			if (x == 0 or x == dim.x-1) and n > 1:
-				t = TILE.SHALLOW_OCEAN
+#			if (x == 0 or x == dim.x-1) and n > 1:
+#				t = TILE.SHALLOW_OCEAN
 
 			# set tundra
 #			if (y < 3 or y > dim.x-3):
@@ -149,92 +147,91 @@ func generate_terrain(dim):
 
 func select_random_green_tile(v):
 
-	# hot
-	if tile_in_middle_third(v):
-		match rng.randi_range(1, 12):
-			1,2,3: return TILE.PLAINS
-			5, 6, 7: return TILE.FOREST
-			9: return TILE.JUNGLE
-			8: return TILE.SWAMP
-			10: return TILE.DESERT
-			_: return TILE.GRASSLAND
+	var t = TILE.GRASSLAND
 
-	# cold
-	else:
+	# random tile assignment
+	match rng.randi_range(1, 12):
+		1,2,3: t = TILE.PLAINS
+		4,5,6: t = TILE.FOREST
+		8: t = TILE.JUNGLE
+		9: if tile_has_sea_access(v): t = TILE.SWAMP
+		10: if tile_in_middle_third(v): t = TILE.DESERT
 
-		match rng.randi_range(1, 12):
-			1,2,3,4: return TILE.PLAINS
-			7: return TILE.FOREST
-			_: return TILE.GRASSLAND
+	return t
 
 func add_random_trees(v):
 
+	var t = -1
+
 	match rng.randi_range(1, 3):
-		1: terrain2.set_cellv(v, TERRAIN2.SMALL_FOREST)
-		2: terrain2.set_cellv(v, TERRAIN2.MEDIUM_FOREST)
-		3: terrain2.set_cellv(v, TERRAIN2.LARGE_FOREST)
+		1: t = TERRAIN2.SMALL_FOREST
+		2: t = TERRAIN2.MEDIUM_FOREST
+		3: t = TERRAIN2.LARGE_FOREST
+
+	terrain2.set_cellv(v, t)
 
 
 func add_random_resource(v, t):
+
+	var r = -1
 
 	# set resources
 	match t:
 
 		TILE.TUNDRA:
 			match rng.randi_range(1, 100):
-				1: add_resource_to_tile(v, RESOURCE.TUNDRA_GAME)
-				2: add_resource_to_tile(v, RESOURCE.ARCTIC_OIL)
-				3: add_resource_to_tile(v, RESOURCE.SEALS)
-				4: add_resource_to_tile(v, RESOURCE.IVORY)
-				5: add_resource_to_tile(v, RESOURCE.FURS)
+				1: r = RESOURCE.TUNDRA_GAME
+				2: r = RESOURCE.ARCTIC_OIL
+				3: r = RESOURCE.SEALS
+				4: r = RESOURCE.IVORY
+				5: r = RESOURCE.FURS
 
 		TILE.PLAINS, TILE.GRASSLAND:
 			match rng.randi_range(1, 80):
-				1: add_resource_to_tile(v, RESOURCE.HORSES)
-				2: add_resource_to_tile(v, RESOURCE.BUFFALO)
-				3: add_resource_to_tile(v, RESOURCE.WHEAT)
-				4: add_resource_to_tile(v, RESOURCE.SHEILD)
-				5: add_resource_to_tile(v, RESOURCE.VILLAGE)
+				1: r = RESOURCE.HORSES
+				2: r = RESOURCE.BUFFALO
+				3: r = RESOURCE.WHEAT
+				4: r = RESOURCE.SHEILD
+				5: r = RESOURCE.VILLAGE
 
 		TILE.FOREST:
 			match rng.randi_range(1, 30):
-				1: add_resource_to_tile(v, RESOURCE.SILK)
-				2: add_resource_to_tile(v, RESOURCE.VILLAGE)
+				1: r = RESOURCE.SILK
+				2: r = RESOURCE.VILLAGE
 
 		TILE.DESERT:
 			match rng.randi_range(1, 30):
-				1: add_resource_to_tile(v, RESOURCE.OIL)
-				2: add_resource_to_tile(v, RESOURCE.OASIS)
+				1: r = RESOURCE.OIL
+				2: r = RESOURCE.OASIS
 
 		TILE.HILLS:
 			match rng.randi_range(1, 25):
-				1: add_resource_to_tile(v, RESOURCE.GOLD)
-				2: add_resource_to_tile(v, RESOURCE.IRON)
-				3: add_resource_to_tile(v, RESOURCE.COAL)
-				4: add_resource_to_tile(v, RESOURCE.WINE)
-				5: add_resource_to_tile(v, RESOURCE.GEMS)
+				1: r = RESOURCE.GOLD
+				2: r = RESOURCE.IRON
+				3: r = RESOURCE.COAL
+				4: r = RESOURCE.WINE
+				5: r = RESOURCE.GEMS
 
 		TILE.MOUNTAINS:
 			match rng.randi_range(1, 30):
-				1: add_resource_to_tile(v, RESOURCE.GOLD)
-				2: add_resource_to_tile(v, RESOURCE.IRON)
-				3: add_resource_to_tile(v, RESOURCE.COAL)
-				4: add_resource_to_tile(v, RESOURCE.GEMS)
+				1: r = RESOURCE.GOLD
+				2: r = RESOURCE.IRON
+				3: r = RESOURCE.COAL
+				4: r = RESOURCE.GEMS
 
 		TILE.SHALLOW_OCEAN:
 			match rng.randi_range(1, 100):
-				1: add_resource_to_tile(v, RESOURCE.FISH)
-				2: add_resource_to_tile(v, RESOURCE.WHALES)
+				1:  r = RESOURCE.FISH
+				2:  r = RESOURCE.WHALES
 
 		TILE.JUNGLE:
 			match rng.randi_range(1, 10):
-				1: add_resource_to_tile(v, RESOURCE.SPICE)
+				1: r = RESOURCE.SPICE
 
 		TILE.SWAMP:
 			match rng.randi_range(1, 10):
-				1: add_resource_to_tile(v, RESOURCE.PEAT)
+				1: r = RESOURCE.PEAT
 
-func add_resource_to_tile(v, r):
 	resources.set_cellv(v, r)
 	celldata[v].resource = r
 
@@ -266,7 +263,6 @@ func tile_has_land_access(v) -> bool:
 	return false
 
 func tile_has_sea_access(v) -> bool:
-
 	for n in neighbours:
 		if tile_is_sea(v + n):
 			return true
