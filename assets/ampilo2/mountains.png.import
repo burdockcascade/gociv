@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/terrain.png-46f0265400eeda8223b42746603edb3e.stex"
+path="res://.import/mountains.png-6a5bc5d841a1939661c99db420ac7e77.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/terrain.png"
-dest_files=[ "res://.import/terrain.png-46f0265400eeda8223b42746603edb3e.stex" ]
+source_file="res://assets/ampilo2/mountains.png"
+dest_files=[ "res://.import/mountains.png-6a5bc5d841a1939661c99db420ac7e77.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
