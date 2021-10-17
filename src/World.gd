@@ -72,6 +72,109 @@ enum RESOURCE {
 
 }
 
+var mapsize = Vector2(128, 128)
+
+var map_offset = Vector2.ZERO
+
+func _ready():
+
+	rng.randomize()
+
+	# generate map
+	generate_terrain(mapsize)
+
+	draw_map()
+
+####################################################################################################
+## DRAW WORLD
+
+var window = Vector2(mapsize.x, mapsize.y)
+var offsetx = 0
+
+var wrapsize = 1
+
+func _unhandled_key_input(event):
+
+	if event.is_action_pressed("ui_left"):
+
+		for i in wrapsize:
+			# new right position
+			var oldx = (mapsize.x - 1) + offsetx
+
+			# new left position
+			var newx = offsetx-1
+
+			move_tiles(oldx, newx)
+
+			offsetx -= 1
+
+
+	elif event.is_action_pressed("ui_right"):
+
+		for i in wrapsize:
+			# new right position
+			var newx = mapsize.x + offsetx
+
+			# new left position
+			var oldx = offsetx
+
+			move_tiles(oldx, newx)
+
+			offsetx += 1
+
+
+func move_tiles(oldx, newx):
+
+	for y in mapsize.y:
+
+		var oldv = Vector2(oldx, y)
+		var newv = Vector2(newx, y)
+
+		# store
+		var cdata: Dictionary = celldata[Vector2(oldv)]
+
+		# new
+		celldata[Vector2(newv)] = cdata
+
+		# remove old
+		celldata.erase(Vector2(oldv))
+
+		draw_cellv(newv)
+		clear_cellv(oldv)
+
+
+func draw_map():
+
+	# paint map
+	for v in celldata:
+		draw_cellv(v)
+
+func draw_cellv(v):
+
+		var cd = celldata[v]
+
+		# paint terrain
+		terrain.set_cellv(v, cd.tile)
+
+		# paint upper terrain
+		terrain2.set_cellv(v, cd.terrain2)
+
+		# paint resources
+		resources.set_cellv(v, cd.resources)
+
+		# paint settleements
+
+		# paint units
+
+		# paint fog
+
+func clear_cellv(v):
+
+	terrain.set_cellv(v, -1)
+	terrain2.set_cellv(v, -1)
+	resources.set_cellv(v, -1)
+
+
 ####################################################################################################
 ## MAP GENERATOR
 
@@ -84,13 +187,11 @@ var tile_height = {
 }
 
 var rng = RandomNumberGenerator.new()
-var noise = OpenSimplexNoise.new()
-var mapsize = Vector2(128, 128)
 
-func _ready():
+func generate_terrain(dim):
 
+	var noise = OpenSimplexNoise.new()
 	randomize()
-	rng.randomize()
 
 	# Noise Configure
 	noise.seed = randi()
@@ -98,24 +199,26 @@ func _ready():
 	noise.period = 20.0
 	noise.persistence = 0.5
 
-	generate_terrain(mapsize)
-
-
-func generate_terrain(dim):
-
 	# set terrain
 	for x in dim.x:
 		for y in dim.y:
 
 			var v = Vector2(x, y)
-			celldata[v] = {}
+			celldata[v] = {
+				tile = -1,
+				terrain2 = -1,
+				resources = -1
+			}
+
+
+			var cd = celldata[v]
 
 			# noise per tile
 			var n = int(abs(4 * noise.get_noise_2dv(v)))
-			var t = tile_height.get(n)
+			cd.tile = tile_height.get(n)
 
 			if n == 2:
-				t = select_random_green_tile(v)
+				cd.tile = select_random_green_tile(v)
 
 			# Set Terrain Wrap
 #			if (x == 0 or x == dim.x-1) and n > 1:
@@ -123,26 +226,24 @@ func generate_terrain(dim):
 
 			# set tundra
 #			if (y < 3 or y > dim.x-3):
-#				t = TILE.TUNDRA
+#				cd.tile = TILE.TUNDRA
 
 			# set ice caps
 			if y == 0 or y == dim.y-1:
-				t = TILE	.ARCTIC
+				cd.tile = TILE.ARCTIC
 
-			# set terrain
-			terrain.set_cellv(v, t)
 
 			# set hills & mountains
-			if n == 3 and t != TILE.ARCTIC:
-				terrain2.set_cellv(v, 0)
-			elif n == 4 and t != TILE.ARCTIC:
-				terrain2.set_cellv(v, 16)
+			if n == 3 and cd.tile != TILE.ARCTIC:
+				cd.terrain2 = 0
+			elif n == 4 and cd.tile != TILE.ARCTIC:
+				cd.terrain2 = 16
+			elif cd.tile == TILE.FOREST:
+				cd.terrain2 = add_random_trees(v)
 
-			if t == TILE.FOREST:
-				add_random_trees(v)
 
 			# resources
-			add_random_resource(v, t)
+			add_random_resource(v, cd.tile)
 
 
 func select_random_green_tile(v):
@@ -168,7 +269,7 @@ func add_random_trees(v):
 		2: t = TERRAIN2.MEDIUM_FOREST
 		3: t = TERRAIN2.LARGE_FOREST
 
-	terrain2.set_cellv(v, t)
+	return t
 
 
 func add_random_resource(v, t):
