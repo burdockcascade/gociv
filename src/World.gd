@@ -91,21 +91,24 @@ func _ready():
 var window = Vector2(mapsize.x, mapsize.y)
 var offsetx = 0
 
-var wrapsize = 1
+var wrapsize = 10
 
 func _unhandled_key_input(event):
 
 	if event.is_action_pressed("ui_left"):
 
 		for i in wrapsize:
+
 			# new right position
 			var oldx = (mapsize.x - 1) + offsetx
 
 			# new left position
 			var newx = offsetx-1
 
+			# move tiles
 			move_tiles(oldx, newx)
 
+			# adjust offset
 			offsetx -= 1
 
 
@@ -118,8 +121,10 @@ func _unhandled_key_input(event):
 			# new left position
 			var oldx = offsetx
 
+			# move tiles
 			move_tiles(oldx, newx)
 
+			# adjust offset
 			offsetx += 1
 
 
@@ -160,7 +165,7 @@ func draw_cellv(v):
 		terrain2.set_cellv(v, cd.terrain2)
 
 		# paint resources
-		resources.set_cellv(v, cd.resources)
+		resources.set_cellv(v, cd.resource)
 
 		# paint settleements
 
