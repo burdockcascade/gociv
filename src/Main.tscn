@@ -1,39 +1,50 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://src/Main.gd" type="Script" id=1]
 [ext_resource path="res://assets/ampilo2/terrain.tres" type="TileSet" id=2]
 [ext_resource path="res://assets/ampilo2/terrain2.tres" type="TileSet" id=3]
 [ext_resource path="res://src/MainCamera.gd" type="Script" id=4]
 [ext_resource path="res://src/World.gd" type="Script" id=5]
 [ext_resource path="res://assets/ampilo2/resources.tres" type="TileSet" id=6]
+[ext_resource path="res://src/Units.gd" type="Script" id=7]
+[ext_resource path="res://src/Map.gd" type="Script" id=8]
 
 [node name="Main" type="Node"]
-script = ExtResource( 1 )
 
-[node name="World" type="Node2D" parent="."]
-script = ExtResource( 5 )
-
-[node name="MainCamera" type="Camera2D" parent="World"]
+[node name="MainCamera" type="Camera2D" parent="."]
 anchor_mode = 0
 current = true
 script = ExtResource( 4 )
 
-[node name="Terrain" type="TileMap" parent="World"]
+[node name="World" type="Node2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="Map" type="Node2D" parent="World"]
+script = ExtResource( 8 )
+
+[node name="Terrain" type="TileMap" parent="World/Map"]
 mode = 1
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 96, 48 )
 format = 1
 
-[node name="Terrain2" type="TileMap" parent="World"]
+[node name="Terrain2" type="TileMap" parent="World/Map"]
 mode = 1
 tile_set = ExtResource( 3 )
 cell_size = Vector2( 96, 48 )
 format = 1
 
-[node name="Resources" type="TileMap" parent="World"]
+[node name="Resources" type="TileMap" parent="World/Map"]
 mode = 1
 tile_set = ExtResource( 6 )
 cell_size = Vector2( 96, 48 )
 format = 1
 
-[node name="DesktopUI" type="Node2D" parent="."]
+[node name="WorldObjects" type="TileMap" parent="."]
+mode = 1
+cell_size = Vector2( 96, 48 )
+format = 1
+script = ExtResource( 7 )
+
+[node name="DesktopUI" type="CanvasLayer" parent="."]
+
+[connection signal="tile_selected" from="World/Map" to="World" method="_on_Map_tile_selected"]
