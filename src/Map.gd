@@ -3,9 +3,9 @@ extends Node2D
 signal tile_selected(mapv)
 signal world_scrolled(direction)
 
-onready var terrain = $Terrain
-onready var terrain2 = $Terrain2
-onready var resources = $Resources
+onready var terrain: TileMap = $Terrain
+onready var terrain2: TileMap = $Terrain2
+onready var resources: TileMap = $Resources
 
 ####################################################################################################
 ## MAP DATA
@@ -76,20 +76,15 @@ enum RESOURCE {
 
 }
 
-var mapsize
-var mapwindow_startx = 0
-var mapwindow_endx = 0
+var mapsize: Vector2
 
-var map_offset = Vector2.ZERO
-
-func _ready():
+func _ready() -> void:
 
 	rng.randomize()
 
-func new_map(size):
+func new_map(size) -> Dictionary:
 
-	self.mapsize = size
-	mapwindow_endx = mapsize.x-1
+	mapsize = size
 
 	# generate map
 	generate_terrain(size)
@@ -116,11 +111,9 @@ func _unhandled_input(event: InputEvent) -> void:
 ####################################################################################################
 ## DRAW WORLD
 
-var ptr = 0
+func slide_map_left() -> void:
 
-func slide_map_left():
-
-	var mx = mapsize.x - 1
+	var mx: int = mapsize.x - 1
 
 	for mapd in mapdata.values():
 
@@ -133,9 +126,9 @@ func slide_map_left():
 	emit_signal("world_scrolled", Vector2.LEFT)
 
 
-func slide_map_right():
+func slide_map_right() -> void:
 
-	var mx = mapsize.x - 1
+	var mx: int = mapsize.x - 1
 
 	for mapd in mapdata.values():
 
@@ -147,13 +140,13 @@ func slide_map_right():
 	draw_map()
 	emit_signal("world_scrolled", Vector2.RIGHT)
 
-func draw_map():
+func draw_map() -> void:
 
 	# paint map
 	for mapv in mapdata:
 
-		var mapd = mapdata[mapv]
-		var cellv = mapd.cellv
+		var mapd: Dictionary = mapdata[mapv]
+		var cellv: Vector2 = mapd.cellv
 
 		# update world position for mapv
 		mapd.worldv = terrain.map_to_world(cellv)
@@ -175,20 +168,10 @@ func draw_map():
 
 
 
-func clear_cellv(mapv):
-
-	var cd = mapdata[mapv]
-	var cellv = cd.cellv
-
-	terrain.set_cellv(cellv, -1)
-	terrain2.set_cellv(cellv, -1)
-	resources.set_cellv(cellv, -1)
-
-
 ####################################################################################################
 ## MAP GENERATOR
 
-var tile_height = {
+var tile_height: Dictionary = {
 	0 : TILE.SHALLOW_OCEAN,
 	1 : TILE.SHALLOW_OCEAN,
 	2 : TILE.GRASSLAND,
@@ -196,11 +179,11 @@ var tile_height = {
 	4 : TILE.MOUNTAINS
 }
 
-var rng = RandomNumberGenerator.new()
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-func generate_terrain(dim):
+func generate_terrain(dim) -> void:
 
-	var noise = OpenSimplexNoise.new()
+	var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 	randomize()
 
 	# Noise Configure
@@ -213,29 +196,25 @@ func generate_terrain(dim):
 	for x in dim.x:
 		for y in dim.y:
 
-			var v = Vector2(x, y)
-			mapdata[v] = {
+			var v: Vector2 = Vector2(x, y)
+
+			var mapd: Dictionary = {
 				cellv = v,
 				worldv = terrain.map_to_world(v),
 				units = [],
 				tile = -1,
 				terrain2 = -1,
-				resource = -1
+				resource = -1,
+				is_water = false,
+				is_land = false
 			}
 
-
-			var cd = mapdata[v]
-
 			# noise per tile
-			var n = int(abs(4 * noise.get_noise_2dv(v)))
-			cd.tile = tile_height.get(n)
+			var n: int = int(abs(4 * noise.get_noise_2dv(v)))
+			mapd.tile = tile_height.get(n)
 
 			if n == 2:
-				cd.tile = select_random_green_tile(v)
-
-			# Set Terrain Wrap
-#			if (x == 0 or x == dim.x-1) and n > 1:
-#				t = TILE.SHALLOW_OCEAN
+				mapd.tile = select_random_green_tile(v)
 
 			# set tundra
 #			if (y < 3 or y > dim.x-3):
@@ -243,25 +222,32 @@ func generate_terrain(dim):
 
 			# set ice caps
 			if y == 0 or y == dim.y-1:
-				cd.tile = TILE.ARCTIC
+				mapd.tile = TILE.ARCTIC
 
 
 			# set hills & mountains
-			if n == 3 and cd.tile != TILE.ARCTIC:
-				cd.terrain2 = 0
-			elif n == 4 and cd.tile != TILE.ARCTIC:
-				cd.terrain2 = 16
-			elif cd.tile == TILE.FOREST:
-				cd.terrain2 = add_random_trees(v)
+			if n == 3 and mapd.tile != TILE.ARCTIC:
+				mapd.terrain2 = 0
+			elif n == 4 and mapd.tile != TILE.ARCTIC:
+				mapd.terrain2 = 16
+			elif mapd.tile == TILE.FOREST:
+				mapd.terrain2 = add_random_trees(v)
 
+			# is water tile
+			mapd.is_water = mapd.tile == TILE.DEEP_OCEAN or mapd.tile == TILE.SHALLOW_OCEAN
+
+			# is land tile
+			mapd.is_land = !mapd.is_water
 
 			# resources
-			add_random_resource(v, cd.tile)
+			mapd.resource = add_random_resource(v, mapd.tile)
+
+			mapdata[v] = mapd
 
 
-func select_random_green_tile(v):
+func select_random_green_tile(v) -> int:
 
-	var t = TILE.GRASSLAND
+	var t: int = TILE.GRASSLAND
 
 	# random tile assignment
 	match rng.randi_range(1, 12):
@@ -273,9 +259,9 @@ func select_random_green_tile(v):
 
 	return t
 
-func add_random_trees(v):
+func add_random_trees(_v) -> int:
 
-	var t = -1
+	var t: int = -1
 
 	match rng.randi_range(1, 3):
 		1: t = TERRAIN2.SMALL_FOREST
@@ -285,9 +271,9 @@ func add_random_trees(v):
 	return t
 
 
-func add_random_resource(v, t):
+func add_random_resource(v, t) -> int:
 
-	var r = -1
+	var r: int = -1
 
 	# set resources
 	match t:
@@ -346,8 +332,7 @@ func add_random_resource(v, t):
 			match rng.randi_range(1, 10):
 				1: r = RESOURCE.PEAT
 
-	resources.set_cellv(v, r)
-	mapdata[v].resource = r
+	return r
 
 ####################################################################################################
 ## TILE HELPER FUNCTIONS
@@ -363,22 +348,17 @@ const neighbours = [
 	Vector2.UP + Vector2.LEFT
 ]
 
-func tile_is_sea(v) -> bool:
-	return terrain.get_cellv(v) == TILE.DEEP_OCEAN or terrain.get_cellv(v) == TILE.SHALLOW_OCEAN
-
-func tile_is_land(v) -> bool:
-	return !tile_is_sea(v)
 
 func tile_has_land_access(v) -> bool:
 	for n in neighbours:
-		if tile_is_land(v + n):
+		if mapdata.has(v + n) and mapdata[v + n].is_land:
 			return true
 
 	return false
 
 func tile_has_sea_access(v) -> bool:
 	for n in neighbours:
-		if tile_is_sea(v + n):
+		if mapdata.has(v + n) and mapdata[v + n].is_water:
 			return true
 
 	return false
@@ -395,18 +375,21 @@ func tile_in_middle_third(v) -> bool:
 ####################################################################################################
 ## PUBLIC FUNCTIONS
 
-func any_random_tile():
+func any_random_tile() -> Vector2:
 	return _find_random_tile(true, true)
 
-func random_land_tile():
+func random_land_tile() -> Vector2:
 	return _find_random_tile(true, false)
 
-func random_sea_tile():
+func random_sea_tile() -> Vector2:
 	return _find_random_tile(false, true)
 
-func _find_random_tile(land, water):
+func _find_random_tile(land, water) -> Vector2:
 	while true:
 		var v = Vector2(rng.randi_range(0, mapsize.x-1), rng.randi_range(0, mapsize.y-1))
-		if tile_is_land(v) == land and tile_is_sea(v) == water:
+		print(mapdata[v])
+		if mapdata[v].is_land == land and mapdata[v].is_water == water:
 			return v
+
+	return Vector2.ONE
 

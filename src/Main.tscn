@@ -41,7 +41,7 @@ tile_set = ExtResource( 6 )
 cell_size = Vector2( 96, 48 )
 format = 1
 
-[node name="WorldObjects" type="TileMap" parent="World"]
+[node name="Units" type="TileMap" parent="World"]
 mode = 1
 cell_size = Vector2( 96, 48 )
 format = 1
@@ -49,5 +49,5 @@ script = ExtResource( 7 )
 
 [node name="DesktopUI" type="CanvasLayer" parent="."]
 
-[connection signal="tile_selected" from="World/Map" to="World/WorldObjects" method="_on_Map_tile_selected"]
-[connection signal="world_scrolled" from="World/Map" to="World/WorldObjects" method="_on_Map_world_scrolled"]
+[connection signal="tile_selected" from="World/Map" to="World/Units" method="_on_Map_tile_selected"]
+[connection signal="world_scrolled" from="World/Map" to="World/Units" method="_on_Map_world_scrolled"]
