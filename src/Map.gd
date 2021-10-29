@@ -1,6 +1,7 @@
 extends Node2D
 
-signal tile_selected(tile_vector, tile_data)
+signal tile_selected(mapv)
+signal world_scrolled(direction)
 
 onready var terrain = $Terrain
 onready var terrain2 = $Terrain2
@@ -98,7 +99,13 @@ func new_map(size):
 	# all done
 	return mapdata
 
-func _unhandled_input(event):
+
+func _unhandled_input(event: InputEvent) -> void:
+
+	if Input.is_action_just_released("ui_click"):
+
+		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
+		emit_signal("tile_selected", mapv)
 
 	if event.is_action_pressed("ui_left"):
 		slide_map_left()
@@ -123,21 +130,22 @@ func slide_map_left():
 			mapd.cellv.x -= 1
 
 	draw_map()
+	emit_signal("world_scrolled", Vector2.LEFT)
 
 
 func slide_map_right():
 
 	var mx = mapsize.x - 1
 
-	for mapd in mapdata.values:
+	for mapd in mapdata.values():
 
 		if mapd.cellv.x == mx:
 			mapd.cellv.x = 0
 		else:
 			mapd.cellv.x += 1
 
-
 	draw_map()
+	emit_signal("world_scrolled", Vector2.RIGHT)
 
 
 #func left_wrap():
@@ -196,6 +204,9 @@ func draw_map():
 		var mapd = mapdata[mapv]
 		var cellv = mapd.cellv
 
+		# update world position for mapv
+		mapd.worldv = terrain.map_to_world(cellv)
+
 		# paint terrain
 		terrain.set_cellv(cellv, mapd.tile)
 
@@ -210,6 +221,8 @@ func draw_map():
 		# paint units
 
 		# paint fog
+
+
 
 func clear_cellv(mapv):
 
