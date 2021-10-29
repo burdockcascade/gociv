@@ -11,9 +11,9 @@ const unit = {
 
 }
 
-var mapdata
+var mapdata: Dictionary
 
-func add_unit(unit, mapv):
+func add_unit(unit: Dictionary, mapv: Vector2) -> void:
 
 	var mapd = mapdata[mapv]
 	var u = load(unit.scene).instance()
@@ -31,22 +31,16 @@ func add_unit(unit, mapv):
 	add_child(u)
 
 
-func get_units_at_cellv(cellv):
+func get_units_at_cellv(cellv: Vector2) -> Array:
 	return get_tree().get_nodes_in_group("mapv_" + str(cellv))
 
-func wrap_units(cellv):
-	var units = get_units_at_cellv(cellv)
 
-	for unit in units:
-		pass
-
-
-func _on_Map_world_scrolled(direction):
+func _on_Map_world_scrolled(direction: Vector2) -> void:
 	for unit in get_children():
 		unit.position = mapdata[unit.at_mapv].worldv
 
 
-func _on_Map_tile_selected(mapv):
+func _on_Map_tile_selected(mapv: Vector2) -> void:
 
 	var units = mapdata[mapv].units
 

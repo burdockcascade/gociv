@@ -82,7 +82,7 @@ func _ready() -> void:
 
 	rng.randomize()
 
-func new_map(size) -> Dictionary:
+func new_map(size: Vector2) -> Dictionary:
 
 	mapsize = size
 
@@ -181,7 +181,7 @@ var tile_height: Dictionary = {
 
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-func generate_terrain(dim) -> void:
+func generate_terrain(dim: Vector2) -> void:
 
 	var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 	randomize()
@@ -245,7 +245,7 @@ func generate_terrain(dim) -> void:
 			mapdata[v] = mapd
 
 
-func select_random_green_tile(v) -> int:
+func select_random_green_tile(v: Vector2) -> int:
 
 	var t: int = TILE.GRASSLAND
 
@@ -259,7 +259,7 @@ func select_random_green_tile(v) -> int:
 
 	return t
 
-func add_random_trees(_v) -> int:
+func add_random_trees(_v: Vector2) -> int:
 
 	var t: int = -1
 
@@ -271,7 +271,7 @@ func add_random_trees(_v) -> int:
 	return t
 
 
-func add_random_resource(v, t) -> int:
+func add_random_resource(v: Vector2, t: int) -> int:
 
 	var r: int = -1
 
@@ -349,21 +349,21 @@ const neighbours = [
 ]
 
 
-func tile_has_land_access(v) -> bool:
+func tile_has_land_access(v: Vector2) -> bool:
 	for n in neighbours:
 		if mapdata.has(v + n) and mapdata[v + n].is_land:
 			return true
 
 	return false
 
-func tile_has_sea_access(v) -> bool:
+func tile_has_sea_access(v: Vector2) -> bool:
 	for n in neighbours:
 		if mapdata.has(v + n) and mapdata[v + n].is_water:
 			return true
 
 	return false
 
-func tile_in_top_third(v) -> bool:
+func tile_in_top_third(v: Vector2) -> bool:
 	return v.y < mapsize.y/3
 
 func tile_in_lower_third(v) -> bool:
@@ -384,10 +384,9 @@ func random_land_tile() -> Vector2:
 func random_sea_tile() -> Vector2:
 	return _find_random_tile(false, true)
 
-func _find_random_tile(land, water) -> Vector2:
+func _find_random_tile(land: bool, water: bool) -> Vector2:
 	while true:
 		var v = Vector2(rng.randi_range(0, mapsize.x-1), rng.randi_range(0, mapsize.y-1))
-		print(mapdata[v])
 		if mapdata[v].is_land == land and mapdata[v].is_water == water:
 			return v
 
