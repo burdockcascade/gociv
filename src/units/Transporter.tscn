@@ -16,6 +16,9 @@ max_movement = 6
 over_water = true
 visibility = 4
 
+[node name="Selector" parent="." index="0"]
+position = Vector2( 0.822632, 25.3841 )
+
 [node name="UnitSprite" parent="." index="1"]
 position = Vector2( -1.58978, 18.3264 )
 texture = SubResource( 1 )

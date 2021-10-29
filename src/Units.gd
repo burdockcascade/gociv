@@ -15,13 +15,19 @@ var mapdata
 
 func add_unit(unit, mapv):
 
+	var mapd = mapdata[mapv]
 	var u = load(unit.scene).instance()
-	u.position = mapdata[mapv].worldv
+
+	# set position of unit
+	u.position = mapd.worldv
 	u.at_mapv = mapv
+
+	# assign to groups
 	u.add_to_group("unit")
 	u.add_to_group("mapv_" + str(mapv))
 
-
+	# add
+	mapd.units.append(u)
 	add_child(u)
 
 
@@ -38,3 +44,14 @@ func wrap_units(cellv):
 func _on_Map_world_scrolled(direction):
 	for unit in get_children():
 		unit.position = mapdata[unit.at_mapv].worldv
+
+
+func _on_Map_tile_selected(mapv):
+
+	var units = mapdata[mapv].units
+
+	if units.size() > 1:
+		print('toomany')
+	elif units.size() == 1:
+		units[0].activate()
+

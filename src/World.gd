@@ -15,7 +15,3 @@ func _ready():
 	wobjects.add_unit(wobjects.unit.transporter, map.random_sea_tile())
 
 
-func _on_Map_tile_selected(mapv):
-
-	if mapdata.has(mapv):
-		print(wobjects.get_units_at_cellv(mapv))

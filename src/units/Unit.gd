@@ -1,5 +1,7 @@
 extends Node2D
 
+onready var selector = $Selector
+
 # warfare
 export var shield: int = 0
 export var weapon: int = 0
@@ -22,3 +24,11 @@ export var visibility: int = 0
 
 var at_mapv = Vector2.INF
 
+
+func activate():
+	selector.visible = true
+	selector.playing = true
+
+func deactivate_selector():
+	selector.visible = false
+	selector.playing = false

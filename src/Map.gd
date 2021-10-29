@@ -147,55 +147,6 @@ func slide_map_right():
 	draw_map()
 	emit_signal("world_scrolled", Vector2.RIGHT)
 
-
-#func left_wrap():
-#
-#	for y in mapsize.y:
-#
-#		# clear cell
-#		clear_cellv(Vector2(ptr, y))
-#
-#		# reposition cell to the right side
-#		mapdata[Vector2(ptr, y)].cellv = Vector2(mapwindow_startx, y)
-#
-#		# draw new cell
-#		draw_mapv(Vector2(ptr, y))
-#
-#	# increment window size
-#	mapwindow_endx -= 1
-#	mapwindow_startx -= 1
-#
-#	# move mapdata pointer
-#	ptr -= 1
-#
-#	if ptr < 0:
-#		ptr = mapsize.x-1
-#
-#
-#
-#func right_wrap():
-#
-#	for y in mapsize.y:
-#
-#		# clear cell
-#		clear_cellv(Vector2(ptr, y))
-#
-#		# reposition cell to the right side
-#		mapdata[Vector2(ptr, y)].cellv = Vector2(mapwindow_endx + 1, y)
-#
-#		# draw new cell
-#		draw_mapv(Vector2(ptr, y))
-#
-#	# increment window size
-#	mapwindow_endx += 1
-#	mapwindow_startx += 1
-#
-#	# move mapdata pointer
-#	ptr += 1
-#
-#	if ptr >= mapsize.x:
-#		ptr = 0
-
 func draw_map():
 
 	# paint map
@@ -266,6 +217,7 @@ func generate_terrain(dim):
 			mapdata[v] = {
 				cellv = v,
 				worldv = terrain.map_to_world(v),
+				units = [],
 				tile = -1,
 				terrain2 = -1,
 				resource = -1
