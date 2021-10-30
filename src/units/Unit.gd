@@ -22,7 +22,7 @@ export var over_water: bool = false
 export var visibility: int = 0
 
 
-var at_mapv = Vector2.INF
+var mapv = Vector2.INF
 
 
 func activate():
@@ -32,3 +32,6 @@ func activate():
 func deactivate_selector():
 	selector.visible = false
 	selector.playing = false
+
+func move_to_neighbour_tile(direction):
+	print(direction)

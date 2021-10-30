@@ -19,3 +19,30 @@ func _ready() -> void:
 	units.add_unit(units.unit.transporter, mapv)
 
 
+####################################################################################################
+## UI Controls
+
+func _unhandled_input(event: InputEvent) -> void:
+
+	if Input.is_action_just_released("ui_click"):
+
+		var mapv: Vector2 = map.terrain.world_to_map(get_global_mouse_position())
+		units.tile_selected(mapv)
+
+
+	# move map
+	if event.is_action_pressed("ui_move_map_left"):
+		map.slide_map_left()
+	elif event.is_action_pressed("ui_move_map_right"):
+		map.slide_map_right()
+
+
+	# move unit
+	if event.is_action_pressed("ui_left"):
+		units.move_active_unit(Vector2.LEFT)
+	elif event.is_action_pressed("ui_right"):
+		units.move_active_unit(Vector2.RIGHT)
+	elif event.is_action_pressed("ui_up"):
+		units.move_active_unit(Vector2.UP)
+	elif event.is_action_pressed("ui_down"):
+		units.move_active_unit(Vector2.DOWN)

@@ -1,6 +1,5 @@
 extends Node2D
 
-signal tile_selected(mapv)
 signal world_scrolled(direction)
 
 onready var terrain: TileMap = $Terrain
@@ -93,20 +92,6 @@ func new_map(size: Vector2) -> Dictionary:
 
 	# all done
 	return mapdata
-
-
-func _unhandled_input(event: InputEvent) -> void:
-
-	if Input.is_action_just_released("ui_click"):
-
-		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
-		emit_signal("tile_selected", mapv)
-
-	if event.is_action_pressed("ui_left"):
-		slide_map_left()
-
-	if event.is_action_pressed("ui_right"):
-		slide_map_right()
 
 ####################################################################################################
 ## DRAW WORLD
