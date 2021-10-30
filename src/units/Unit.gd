@@ -26,7 +26,6 @@ onready var movement_sound = $MovementSound
 var mapdata: Dictionary
 
 var current_mapv = Vector2.ZERO
-var active: bool = false
 
 ####################################################################################################
 ## Selector

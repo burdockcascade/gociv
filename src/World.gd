@@ -15,7 +15,7 @@ func _ready() -> void:
 	units.mapdata = mapdata
 
 	# add unit to map
-#	units.add_unit(units.unit.transporter, map.random_sea_tile())
+	units.add_unit(units.unit.transporter, map.random_sea_tile())
 	units.add_unit(units.unit.caravan, map.random_land_tile())
 
 

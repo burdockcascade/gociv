@@ -50,6 +50,9 @@ func _on_Map_world_scrolled(direction: Vector2) -> void:
 
 func tile_selected(mapv: Vector2) -> void:
 
+	if active_unit:
+		active_unit.deactivate_selector()
+
 	var units = mapdata[mapv].units
 
 	if units.size() > 1:

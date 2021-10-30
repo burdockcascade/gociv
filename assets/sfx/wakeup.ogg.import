@@ -11,5 +11,5 @@ dest_files=[ "res://.import/wakeup.ogg-d229c108d0774ff5bb2449b86a80c0b5.oggstr" 
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

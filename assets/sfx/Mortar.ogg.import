@@ -11,5 +11,5 @@ dest_files=[ "res://.import/Mortar.ogg-06ddb9100cbcd08701d0f5be4ba1ae88.oggstr" 
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

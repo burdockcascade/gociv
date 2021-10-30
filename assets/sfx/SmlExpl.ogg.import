@@ -11,5 +11,5 @@ dest_files=[ "res://.import/SmlExpl.ogg-0991df9446c5ab988b5101078c5436a2.oggstr"
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

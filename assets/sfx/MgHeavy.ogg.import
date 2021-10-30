@@ -11,5 +11,5 @@ dest_files=[ "res://.import/MgHeavy.ogg-9e34129391df336986bc25c711fe45de.oggstr"
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

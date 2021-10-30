@@ -11,5 +11,5 @@ dest_files=[ "res://.import/metbrk.ogg-f68e69f93a2552b3d896dc11cd052893.oggstr" 
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

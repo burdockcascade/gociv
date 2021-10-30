@@ -11,5 +11,5 @@ dest_files=[ "res://.import/THover.ogg-2e6d9669ecaa51ae526fae52be705845.oggstr" 
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0
