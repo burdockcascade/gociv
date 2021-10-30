@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/MgBar2.ogg-3e9aa4e003ce331c8046ebddbc285f14.oggstr"
+
+[deps]
+
+source_file="res://assets/sfx/MgBar2.ogg"
+dest_files=[ "res://.import/MgBar2.ogg-3e9aa4e003ce331c8046ebddbc285f14.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

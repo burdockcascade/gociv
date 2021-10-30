@@ -1,4 +1,4 @@
-extends TileMap
+extends Node2D
 
 const unit = {
 
@@ -7,6 +7,12 @@ const unit = {
 		max_move = 5,
 		land = false,
 		water = true,
+	},
+	caravan = {
+		scene = "res://src/units/Caravan.tscn",
+		max_move = 3,
+		land = true,
+		water = false,
 	}
 
 }
@@ -19,11 +25,13 @@ var active_unit
 
 func add_unit(unit: Dictionary, mapv: Vector2) -> Node2D:
 
-	var u = load(unit.scene).instance()
+	var u: Node2D = load(unit.scene).instance()
 
-	_set_unit_position(u, mapv)
+	u.mapdata = mapdata
+	u.set_mapv(mapv)
 
 	# add
+	u.add_to_group("unit")
 	add_child(u)
 
 	return u
@@ -51,30 +59,6 @@ func tile_selected(mapv: Vector2) -> void:
 		units[0].activate()
 		active_unit = units[0]
 
-####################################################################################################
-## Unit Movement
+func move_active_unit(direction):
+	active_unit.move_by_direction(direction)
 
-func move_active_unit(direction: Vector2):
-	if !active_unit:
-		return
-
-	_set_unit_position(active_unit, active_unit.mapv + direction)
-
-func _set_unit_position(u: Node2D, mapv: Vector2) -> void:
-
-	var mapd: Dictionary = mapdata[mapv]
-
-	# stop movement over land or water
-	if mapd.is_land != u.over_land and mapd.is_water != u.over_water:
-		return
-
-	# set position of unit
-	u.position = mapd.worldv
-	u.mapv = mapv
-
-	# assign to groups
-	u.add_to_group("unit")
-	u.add_to_group("mapv_" + str(mapv))
-
-	# append to mapd
-	mapd.units.append(u)

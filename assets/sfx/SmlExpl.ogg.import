@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/SmlExpl.ogg-0991df9446c5ab988b5101078c5436a2.oggstr"
+
+[deps]
+
+source_file="res://assets/sfx/SmlExpl.ogg"
+dest_files=[ "res://.import/SmlExpl.ogg-0991df9446c5ab988b5101078c5436a2.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

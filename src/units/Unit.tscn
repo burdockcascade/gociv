@@ -32,6 +32,10 @@ script = ExtResource( 2 )
 
 [node name="Selector" type="AnimatedSprite" parent="."]
 visible = false
+position = Vector2( 0, 28 )
 frames = SubResource( 5 )
 
 [node name="UnitSprite" type="Sprite" parent="."]
+position = Vector2( -4, 17 )
+
+[node name="MovementSound" type="AudioStreamPlayer2D" parent="."]

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Mortar.ogg-06ddb9100cbcd08701d0f5be4ba1ae88.oggstr"
+
+[deps]
+
+source_file="res://assets/sfx/Mortar.ogg"
+dest_files=[ "res://.import/Mortar.ogg-06ddb9100cbcd08701d0f5be4ba1ae88.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

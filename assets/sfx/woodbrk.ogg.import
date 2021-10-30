@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/woodbrk.ogg-fee59311f7dc53d444784364666ba3e0.oggstr"
+
+[deps]
+
+source_file="res://assets/sfx/woodbrk.ogg"
+dest_files=[ "res://.import/woodbrk.ogg-fee59311f7dc53d444784364666ba3e0.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

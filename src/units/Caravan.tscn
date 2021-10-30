@@ -1,5 +1,18 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://src/units/Unit.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/ampilo2/units.png" type="Texture" id=2]
+[ext_resource path="res://assets/sfx/foot3.ogg" type="AudioStream" id=3]
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 2 )
+region = Rect2( 261, 50, 64, 48 )
 
 [node name="Caravan" instance=ExtResource( 1 )]
+over_land = true
+
+[node name="UnitSprite" parent="." index="1"]
+texture = SubResource( 1 )
+
+[node name="MovementSound" parent="." index="2"]
+stream = ExtResource( 3 )
