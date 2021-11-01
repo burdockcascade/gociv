@@ -357,6 +357,11 @@ func tile_in_lower_third(v) -> bool:
 func tile_in_middle_third(v) -> bool:
 	return !tile_in_top_third(v) and !tile_in_lower_third(v)
 
+
+func wrap_mapv(mapv: Vector2) -> Vector2:
+	mapv.x = wrapi(mapv.x, 0, mapsize.x)
+	return mapv
+
 ####################################################################################################
 ## PUBLIC FUNCTIONS
 
