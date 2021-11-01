@@ -98,14 +98,8 @@ func new_map(size: Vector2) -> Dictionary:
 
 func slide_map_left() -> void:
 
-	var mx: int = mapsize.x - 1
-
 	for mapd in mapdata.values():
-
-		if mapd.cellv.x == 0:
-			mapd.cellv.x = mx
-		else:
-			mapd.cellv.x -= 1
+		mapd.cellv.x = wrapi(mapd.cellv.x - 1, 0, mapsize.x)
 
 	draw_map()
 	emit_signal("world_scrolled", Vector2.LEFT)
@@ -113,14 +107,8 @@ func slide_map_left() -> void:
 
 func slide_map_right() -> void:
 
-	var mx: int = mapsize.x - 1
-
 	for mapd in mapdata.values():
-
-		if mapd.cellv.x == mx:
-			mapd.cellv.x = 0
-		else:
-			mapd.cellv.x += 1
+		mapd.cellv.x = wrapi(mapd.cellv.x + 1, 0, mapsize.x)
 
 	draw_map()
 	emit_signal("world_scrolled", Vector2.RIGHT)
