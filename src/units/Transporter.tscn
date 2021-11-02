@@ -13,7 +13,7 @@ capacity = 8
 build_cost = 4
 support_cost = 1
 build_cycle = 2
-max_movement = 6
+max_travel = 6
 over_water = true
 visibility = 4
 

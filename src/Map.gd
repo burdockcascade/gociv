@@ -193,7 +193,7 @@ func generate_terrain(dim: Vector2) -> void:
 				resource = -1,
 				is_water = false,
 				is_land = false,
-				travel_time = 1,
+				travel_cost = 1,
 			}
 
 			# noise per tile
@@ -215,7 +215,7 @@ func generate_terrain(dim: Vector2) -> void:
 			# set hills & mountains
 			if mapd.height == HEIGHT.HILL and mapd.tile != TILE.ARCTIC:
 				mapd.terrain2 = 0
-				mapd.travel_time = 1
+				mapd.travel_cost = 1
 			elif mapd.height == HEIGHT.MOUNTAIN and mapd.tile != TILE.ARCTIC:
 				mapd.terrain2 = RESOURCE.TUNDRA_GAME
 			elif mapd.tile == TILE.FOREST:

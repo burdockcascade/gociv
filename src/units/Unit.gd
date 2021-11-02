@@ -1,6 +1,7 @@
 extends Node2D
 
 onready var selector = $Selector
+onready var movement_sound = $MovementSound
 
 # warfare
 export var shield: int = 0
@@ -16,32 +17,36 @@ export var support_cost: int = 0
 export var build_cycle: int = 0
 
 # movement
-export var max_movement: int = 0
+export var max_travel: int = 0
 export var over_land: bool = false
 export var over_water: bool = false
 export var visibility: int = 0
 
-onready var movement_sound = $MovementSound
-
 var current_mapv = Vector2.ZERO
+
+var can_move: bool = true
+var current_travel: int = 0
+
+####################################################################################################
+## Selector
+
+func turn_over():
+	deactivate()
+	can_move = false
+
+func new_turn():
+	can_move = true
+	current_travel = 0
+
 
 ####################################################################################################
 ## Selector
 
 func activate():
-	selector.visible = true
-	selector.playing = true
+	if can_move:
+		selector.visible = true
+		selector.playing = true
 
-func deactivate_selector():
+func deactivate():
 	selector.visible = false
 	selector.playing = false
-
-
-####################################################################################################
-## Sounds
-
-func play_sound():
-
-	# play sound
-	if movement_sound:
-		movement_sound.play()

@@ -9,7 +9,7 @@ atlas = ExtResource( 1 )
 region = Rect2( 846, 50, 64, 48 )
 
 [node name="Explorer" instance=ExtResource( 2 )]
-max_movement = 6
+max_travel = 4
 over_land = true
 visibility = 4
 

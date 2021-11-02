@@ -9,6 +9,7 @@ atlas = ExtResource( 2 )
 region = Rect2( 261, 50, 64, 48 )
 
 [node name="Caravan" instance=ExtResource( 1 )]
+max_travel = 2
 over_land = true
 
 [node name="UnitSprite" parent="." index="1"]

@@ -10,35 +10,18 @@ const MAPSIZE_MEDIUM: Vector2 = Vector2(64, 64)
 const MAPSIZE_TEST: Vector2 = Vector2(32, 32)
 
 ####################################################################################################
-## Unit DB
-
-const unit = {
-
-	transporter = {
-		scene = "res://src/units/Transporter.tscn"
-	},
-	caravan = {
-		scene = "res://src/units/Caravan.tscn"
-	},
-	explorer = {
-		scene = "res://src/units/Explorer.tscn"
-	}
-
-}
-
-####################################################################################################
 ## READY
 
 func _ready() -> void:
 
 	# generate map
-	mapdata = map.new_map(MAPSIZE_MEDIUM)
+	mapdata = map.new_map(MAPSIZE_TEST)
 	units.mapdata = mapdata
 
 	# add unit to map
-	units.add_unit(unit.transporter, map.random_sea_tile())
-	units.add_unit(unit.caravan, map.random_land_tile())
-	units.add_unit(unit.explorer, map.random_land_tile())
+	units.add_unit("transporter", map.random_sea_tile())
+	units.add_unit("caravan", map.random_land_tile())
+	units.add_unit("explorer", map.random_land_tile())
 
 ####################################################################################################
 ## UI CONTROLS
