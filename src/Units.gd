@@ -1,16 +1,5 @@
 extends Node2D
 
-const unit = {
-
-	transporter = {
-		scene = "res://src/units/Transporter.tscn"
-	},
-	caravan = {
-		scene = "res://src/units/Caravan.tscn"
-	}
-
-}
-
 onready var map = get_node("../Map")
 var mapdata: Dictionary
 var active_unit

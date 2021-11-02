@@ -13,6 +13,7 @@ var mapdata: Dictionary = {}
 var landnav: AStar2D = AStar2D.new()
 var waternav: AStar2D = AStar2D.new()
 
+# order is important
 enum TILE {
 
 	SHALLOW_OCEAN,
@@ -30,6 +31,7 @@ enum TILE {
 
 }
 
+# order is important
 enum TERRAIN2 {
 
 	SMALL_FOREST = 49
@@ -38,9 +40,10 @@ enum TERRAIN2 {
 
 }
 
+# order is important
 enum RESOURCE {
 
-	OASIS,
+	OASIS, # 0
 	OIL,
 	OILRIG
 	BUFFALO,
@@ -50,7 +53,7 @@ enum RESOURCE {
 	SILK,
 	FARMLAND,
 	COAL,
-	WINE,
+	WINE, # 10
 	MINING,
 	GOLD,
 	IRON,
@@ -60,7 +63,7 @@ enum RESOURCE {
 	VILLAGE,
 	IVORY,
 	ARCTIC_OIL,
-	FALLOUT,
+	FALLOUT, # 20
 	PEAT,
 	SPICE,
 	OIL_PLATFORM,
@@ -70,28 +73,19 @@ enum RESOURCE {
 	WHALES,
 	SEALS,
 	FOREST_GAME,
-	HORSES,
+	HORSES, # 30
 	SHEILD
 
 }
+
+####################################################################################################
+## Ready
 
 var mapsize: Vector2
 
 func _ready() -> void:
 
 	rng.randomize()
-
-func new_map(size: Vector2) -> Dictionary:
-
-	mapsize = size
-
-	# generate map
-	generate_terrain(size)
-
-	draw_map()
-
-	# all done
-	return mapdata
 
 ####################################################################################################
 ## DRAW WORLD
@@ -139,20 +133,38 @@ func draw_map() -> void:
 
 		# paint fog
 
-
-
 ####################################################################################################
 ## MAP GENERATOR
 
+enum HEIGHT {
+	DEEP_SEA,
+	SHALLOW_OCEAN,
+	FLATLAND,
+	HILL,
+	MOUNTAIN
+}
+
 var tile_height: Dictionary = {
-	0 : TILE.SHALLOW_OCEAN,
-	1 : TILE.SHALLOW_OCEAN,
-	2 : TILE.GRASSLAND,
-	3 : TILE.HILLS,
-	4 : TILE.MOUNTAINS
+	HEIGHT.DEEP_SEA : TILE.SHALLOW_OCEAN,
+	HEIGHT.SHALLOW_OCEAN : TILE.SHALLOW_OCEAN,
+	HEIGHT.FLATLAND : TILE.GRASSLAND,
+	HEIGHT.HILL : TILE.HILLS,
+	HEIGHT.MOUNTAIN : TILE.MOUNTAINS
 }
 
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+
+func new_map(size: Vector2) -> Dictionary:
+
+	mapsize = size
+
+	# generate map
+	generate_terrain(size)
+
+	draw_map()
+
+	# all done
+	return mapdata
 
 func generate_terrain(dim: Vector2) -> void:
 
@@ -161,7 +173,7 @@ func generate_terrain(dim: Vector2) -> void:
 
 	# Noise Configure
 	noise.seed = randi()
-	noise.octaves = 0.5
+	noise.octaves = 0.3
 	noise.period = 20.0
 	noise.persistence = 0.5
 
@@ -175,18 +187,20 @@ func generate_terrain(dim: Vector2) -> void:
 				cellv = v,
 				worldv = terrain.map_to_world(v),
 				units = [],
+				height = 0,
 				tile = -1,
 				terrain2 = -1,
 				resource = -1,
 				is_water = false,
-				is_land = false
+				is_land = false,
+				travel_time = 1,
 			}
 
 			# noise per tile
-			var n: int = int(abs(4 * noise.get_noise_2dv(v)))
-			mapd.tile = tile_height.get(n)
+			mapd.height = int(abs(5 * noise.get_noise_2dv(v)))
+			mapd.tile = tile_height.get(mapd.height)
 
-			if n == 2:
+			if mapd.height == HEIGHT.FLATLAND:
 				mapd.tile = select_random_green_tile(v)
 
 			# set tundra
@@ -199,15 +213,16 @@ func generate_terrain(dim: Vector2) -> void:
 
 
 			# set hills & mountains
-			if n == 3 and mapd.tile != TILE.ARCTIC:
+			if mapd.height == HEIGHT.HILL and mapd.tile != TILE.ARCTIC:
 				mapd.terrain2 = 0
-			elif n == 4 and mapd.tile != TILE.ARCTIC:
-				mapd.terrain2 = 16
+				mapd.travel_time = 1
+			elif mapd.height == HEIGHT.MOUNTAIN and mapd.tile != TILE.ARCTIC:
+				mapd.terrain2 = RESOURCE.TUNDRA_GAME
 			elif mapd.tile == TILE.FOREST:
 				mapd.terrain2 = add_random_trees(v)
 
 			# is water tile
-			mapd.is_water = mapd.tile == TILE.DEEP_OCEAN or mapd.tile == TILE.SHALLOW_OCEAN
+			mapd.is_water = (mapd.tile == TILE.DEEP_OCEAN) or (mapd.tile == TILE.SHALLOW_OCEAN)
 
 			# is land tile
 			mapd.is_land = !mapd.is_water
@@ -278,15 +293,12 @@ func add_random_resource(v: Vector2, t: int) -> int:
 				2: r = RESOURCE.OASIS
 
 		TILE.HILLS:
-			match rng.randi_range(1, 25):
-				1: r = RESOURCE.GOLD
-				2: r = RESOURCE.IRON
+			match rng.randi_range(1, 20):
 				3: r = RESOURCE.COAL
 				4: r = RESOURCE.WINE
-				5: r = RESOURCE.GEMS
 
 		TILE.MOUNTAINS:
-			match rng.randi_range(1, 30):
+			match rng.randi_range(1, 10):
 				1: r = RESOURCE.GOLD
 				2: r = RESOURCE.IRON
 				3: r = RESOURCE.COAL
