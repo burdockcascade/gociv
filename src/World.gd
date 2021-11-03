@@ -50,3 +50,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		units.move_active_unit(Vector2.UP)
 	elif event.is_action_pressed("ui_down"):
 		units.move_active_unit(Vector2.DOWN)
+
+
+func _on_Button_pressed():
+	
+	for unit in get_tree().get_nodes_in_group("unit"):
+		unit.new_turn()

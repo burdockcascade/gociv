@@ -46,4 +46,22 @@ script = ExtResource( 7 )
 
 [node name="DesktopUI" type="CanvasLayer" parent="."]
 
+[node name="PanelContainer" type="PanelContainer" parent="DesktopUI"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -44.0
+margin_right = 44.0
+margin_bottom = 34.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="DesktopUI/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 81.0
+margin_bottom = 27.0
+text = "Next Turn"
+
 [connection signal="world_scrolled" from="World/Map" to="World/Units" method="_on_Map_world_scrolled"]
+[connection signal="pressed" from="DesktopUI/PanelContainer/Button" to="World" method="_on_Button_pressed"]

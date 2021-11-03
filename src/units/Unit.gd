@@ -35,6 +35,7 @@ func turn_over():
 	can_move = false
 
 func new_turn():
+	print("new turn")
 	can_move = true
 	current_travel = 0
 
