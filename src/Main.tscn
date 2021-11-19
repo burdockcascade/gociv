@@ -41,10 +41,10 @@ tile_set = ExtResource( 6 )
 cell_size = Vector2( 96, 48 )
 format = 1
 
-[node name="Cities" type="Node2D" parent="World/Map"]
-
-[node name="Units" type="Node2D" parent="World"]
+[node name="Units" type="Node2D" parent="World/Map"]
 script = ExtResource( 7 )
+
+[node name="Cities" type="Node2D" parent="World/Map"]
 
 [node name="DesktopUI" type="CanvasLayer" parent="."]
 

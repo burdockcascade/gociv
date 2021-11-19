@@ -1,7 +1,7 @@
 extends Node2D
 
 onready var map: Node2D = $Map
-onready var units: Node2D = $Units
+onready var units: Node2D = $Map/Units
 
 const MAPSIZE_LARGE: Vector2 = Vector2(128, 128)
 const MAPSIZE_MEDIUM: Vector2 = Vector2(64, 64)
