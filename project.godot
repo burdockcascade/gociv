@@ -13,6 +13,11 @@ config_version=4
 config/name="GoCiv"
 run/main_scene="res://src/Main.tscn"
 
+[autoload]
+
+Game="*res://src/global/Game.gd"
+Events="*res://src/global/Events.gd"
+
 [editor_plugins]
 
 enabled=PoolStringArray(  )
@@ -34,9 +39,9 @@ ui_move_map_right={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":125,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
-ui_next_unit={
+unit_explore={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":88,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 

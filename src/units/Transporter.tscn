@@ -8,14 +8,14 @@
 atlas = ExtResource( 2 )
 region = Rect2( 391, 50, 64, 48 )
 
-[node name="Transporter" instance=ExtResource( 1 )]
+[node name="Transporter" groups=["transporter"] instance=ExtResource( 1 )]
 capacity = 8
 build_cost = 4
 support_cost = 1
 build_cycle = 2
 max_travel = 6
 over_water = true
-visibility = 4
+visibility = 1
 
 [node name="Selector" parent="." index="0"]
 position = Vector2( 0.822632, 25.3841 )

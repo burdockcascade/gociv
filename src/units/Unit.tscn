@@ -27,7 +27,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[node name="Unit" type="Node2D"]
+[node name="Unit" type="Node2D" groups=["unit"]]
 script = ExtResource( 2 )
 
 [node name="Selector" type="AnimatedSprite" parent="."]
@@ -39,3 +39,8 @@ frames = SubResource( 5 )
 position = Vector2( -4, 17 )
 
 [node name="MovementSound" type="AudioStreamPlayer2D" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

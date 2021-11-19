@@ -1,17 +1,11 @@
 extends Node2D
 
-signal world_scrolled(direction)
-
 onready var terrain: TileMap = $Terrain
 onready var terrain2: TileMap = $Terrain2
 onready var resources: TileMap = $Resources
 
 ####################################################################################################
 ## MAP DATA
-
-var mapdata: Dictionary = {}
-var landnav: AStar2D = AStar2D.new()
-var waternav: AStar2D = AStar2D.new()
 
 # order is important
 enum TILE {
@@ -81,57 +75,75 @@ enum RESOURCE {
 ####################################################################################################
 ## Ready
 
-var mapsize: Vector2
-
 func _ready() -> void:
 
 	rng.randomize()
+	
+	Events.connect("map_updated", self, "draw_map")
+
+####################################################################################################
+## UI CONTROLS
+
+func _unhandled_input(event: InputEvent) -> void:
+
+	if Input.is_action_just_released("ui_click"):
+		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
+		
+		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
+			unit.activate()
+
+	# move map
+	if event.is_action_pressed("ui_move_map_left"):
+		on_map_scrolled(Vector2.LEFT)
+	elif event.is_action_pressed("ui_move_map_right"):
+		on_map_scrolled(Vector2.RIGHT)
 
 ####################################################################################################
 ## DRAW WORLD
 
-func slide_map_left() -> void:
-
-	for mapd in mapdata.values():
-		mapd.cellv.x = wrapi(mapd.cellv.x - 1, 0, mapsize.x)
-
+func on_map_scrolled(direction: Vector2) -> void:
+	
+	# update mapv with new cellv
+	for mapd in Game.mapdata.values():
+		mapd.cellv.x = wrapi(mapd.cellv.x + direction.x, 0, Game.mapsize.x)
+	
+	# update tiles with new position
 	draw_map()
-	emit_signal("world_scrolled", Vector2.LEFT)
-
-
-func slide_map_right() -> void:
-
-	for mapd in mapdata.values():
-		mapd.cellv.x = wrapi(mapd.cellv.x + 1, 0, mapsize.x)
-
-	draw_map()
-	emit_signal("world_scrolled", Vector2.RIGHT)
+	
+	# shift units
+	for unit in get_tree().get_nodes_in_group("unit"):
+		unit.draw_unit()
 
 func draw_map() -> void:
+	
+	terrain.clear()
+	terrain2.clear()
+	resources.clear()
 
 	# paint map
-	for mapv in mapdata:
+	for mapv in Game.mapdata:
 
-		var mapd: Dictionary = mapdata[mapv]
+		var mapd: Dictionary = Game.mapdata[mapv]
 		var cellv: Vector2 = mapd.cellv
 
 		# update world position for mapv
 		mapd.worldv = terrain.map_to_world(cellv)
 
-		# paint terrain
-		terrain.set_cellv(cellv, mapd.tile)
+		if mapd.visible:
 
-		# paint upper terrain
-		terrain2.set_cellv(cellv, mapd.terrain2)
+			# paint terrain
+			terrain.set_cellv(cellv, mapd.tile)
 
-		# paint resources
-		resources.set_cellv(cellv, mapd.resource)
+			# paint upper terrain
+			terrain2.set_cellv(cellv, mapd.terrain2)
 
-		# paint settlements
+			# paint resources
+			resources.set_cellv(cellv, mapd.resource)
 
-		# paint units
+			# paint settlements
 
 		# paint fog
+	
 
 ####################################################################################################
 ## MAP GENERATOR
@@ -154,17 +166,15 @@ var tile_height: Dictionary = {
 
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-func new_map(size: Vector2) -> Dictionary:
+func new_map(size: Vector2) -> void:
 
-	mapsize = size
+	Game.mapsize = size
 
 	# generate map
 	generate_terrain(size)
 
 	draw_map()
 
-	# all done
-	return mapdata
 
 func generate_terrain(dim: Vector2) -> void:
 
@@ -184,16 +194,29 @@ func generate_terrain(dim: Vector2) -> void:
 			var v: Vector2 = Vector2(x, y)
 
 			var mapd: Dictionary = {
+				
+				# positional
 				cellv = v,
 				worldv = terrain.map_to_world(v),
+				
+				# units
 				units = [],
-				height = 0,
+				
+				# tiles
 				tile = -1,
 				terrain2 = -1,
 				resource = -1,
+				
+				# terrain
+				height = 0,
 				is_water = false,
 				is_land = false,
 				travel_cost = 1,
+				
+				# exploration
+				explored = false,
+				visible = false,
+				fog = true
 			}
 
 			# noise per tile
@@ -230,7 +253,7 @@ func generate_terrain(dim: Vector2) -> void:
 			# resources
 			mapd.resource = add_random_resource(v, mapd.tile)
 
-			mapdata[v] = mapd
+			Game.mapdata[v] = mapd
 
 
 func select_random_green_tile(v: Vector2) -> int:
@@ -336,31 +359,26 @@ const neighbours = [
 
 func tile_has_land_access(v: Vector2) -> bool:
 	for n in neighbours:
-		if mapdata.has(v + n) and mapdata[v + n].is_land:
+		if Game.mapdata.has(v + n) and Game.mapdata[v + n].is_land:
 			return true
 
 	return false
 
 func tile_has_sea_access(v: Vector2) -> bool:
 	for n in neighbours:
-		if mapdata.has(v + n) and mapdata[v + n].is_water:
+		if Game.mapdata.has(v + n) and Game.mapdata[v + n].is_water:
 			return true
 
 	return false
 
 func tile_in_top_third(v: Vector2) -> bool:
-	return v.y < mapsize.y/3
+	return v.y < Game.mapsize.y/3
 
 func tile_in_lower_third(v) -> bool:
-	return v.y > (mapsize.y/3) * 2
+	return v.y > (Game.mapsize.y/3) * 2
 
 func tile_in_middle_third(v) -> bool:
 	return !tile_in_top_third(v) and !tile_in_lower_third(v)
-
-
-func wrap_mapv(mapv: Vector2) -> Vector2:
-	mapv.x = wrapi(mapv.x, 0, mapsize.x)
-	return mapv
 
 ####################################################################################################
 ## PUBLIC FUNCTIONS
@@ -376,8 +394,8 @@ func random_sea_tile() -> Vector2:
 
 func _find_random_tile(land: bool, water: bool) -> Vector2:
 	while true:
-		var v = Vector2(rng.randi_range(0, mapsize.x-1), rng.randi_range(0, mapsize.y-1))
-		if mapdata[v].is_land == land and mapdata[v].is_water == water:
+		var v = Vector2(rng.randi_range(0, Game.mapsize.x-1), rng.randi_range(0, Game.mapsize.y-1))
+		if Game.mapdata[v].is_land == land and Game.mapdata[v].is_water == water:
 			return v
 
 	return Vector2.ONE

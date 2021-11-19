@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/ampilo2/terrain.tres" type="TileSet" id=2]
 [ext_resource path="res://assets/ampilo2/terrain2.tres" type="TileSet" id=3]
@@ -7,7 +7,6 @@
 [ext_resource path="res://assets/ampilo2/resources.tres" type="TileSet" id=6]
 [ext_resource path="res://src/Units.gd" type="Script" id=7]
 [ext_resource path="res://src/Map.gd" type="Script" id=8]
-[ext_resource path="res://src/cities/City.tscn" type="PackedScene" id=9]
 
 [node name="Main" type="Node"]
 
@@ -44,9 +43,6 @@ format = 1
 
 [node name="Cities" type="Node2D" parent="World/Map"]
 
-[node name="Node2D" parent="World/Map/Cities" instance=ExtResource( 9 )]
-position = Vector2( 599, 452 )
-
 [node name="Units" type="Node2D" parent="World"]
 script = ExtResource( 7 )
 
@@ -69,5 +65,4 @@ margin_right = 81.0
 margin_bottom = 27.0
 text = "Next Turn"
 
-[connection signal="world_scrolled" from="World/Map" to="World/Units" method="_on_Map_world_scrolled"]
 [connection signal="pressed" from="DesktopUI/PanelContainer/Button" to="World" method="_on_Button_pressed"]
