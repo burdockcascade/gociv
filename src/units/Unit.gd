@@ -4,8 +4,8 @@ onready var selector = $Selector
 onready var movement_sound = $MovementSound
 
 # state
-enum State { FREE, EXPLORE }
-var current_state: int = State.FREE
+enum State { IDLE, EXPLORE }
+var current_state: int = State.IDLE
 
 # warfare
 export var shield: int = 0
@@ -44,6 +44,17 @@ func _on_Timer_timeout():
 		State.EXPLORE:
 			explore_movement()
 
+func activate():
+	if can_move:
+		selector.visible = true
+		selector.playing = true
+		active = true
+
+func deactivate():
+	selector.visible = false
+	selector.playing = false
+	active = false
+
 ####################################################################################################
 ## Turn
 
@@ -56,6 +67,10 @@ func new_turn():
 	print("new turn")
 	can_move = true
 	current_travel = 0
+	
+	if current_state == State.EXPLORE:
+		timer.start()
+		explore_movement()
 
 ####################################################################################################
 ## UI CONTROLS
@@ -83,18 +98,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		timer.start()
 		explore_movement()
 
-####################################################################################################
-## Selector
 
-func activate():
-	if can_move:
-		selector.visible = true
-		selector.playing = true
-		active = true
-
-func deactivate():
-	selector.visible = false
-	selector.playing = false
 
 ####################################################################################################
 ## Movement
@@ -112,38 +116,67 @@ const neighbours: Array = [
 
 func explore_movement() -> void:
 	
-	if not can_move:
-		return
+	neighbours.shuffle()
 	
 	for n in neighbours:
 		
+		if not can_move:
+			return
+
 		var neighbour_mapv = current_mapv + n
 		
-		if Game.mapdata.has(neighbour_mapv) and not Game.mapdata[neighbour_mapv].explored:
-			if move_unit_by_direction(neighbour_mapv):
-				print("brk")
-				break
+		# wrap
+		neighbour_mapv = Vector2(wrapi(neighbour_mapv.x, 0, Game.mapsize.x), neighbour_mapv.y)
+		
+		# skip if mapv doesn't exist
+		if not Game.mapdata.has(neighbour_mapv):
+			continue
+		
+		# skip if cant move to tile
+		if not can_move_to_mapv(neighbour_mapv):
+			continue
+		
+		# skip if explored
+		if Game.mapdata[neighbour_mapv].explored:
+			continue
+		
+		# end if movement successfuk
+		if move_unit_to_mapv(neighbour_mapv):
+			return
+	
+	# cant move anyway
+	current_state = State.IDLE
 	
 
 func move_unit_by_direction(direction: Vector2) -> bool:
 	
 	if not can_move:
 		return false
+		
+	var dest_mapv = Vector2(wrapi(current_mapv.x + direction.x, 0, Game.mapsize.x), current_mapv.y + direction.y)
 	
-	return move_unit_to_mapv(Vector2(wrapi(current_mapv.x + direction.x, 0, Game.mapsize.x), current_mapv.y + direction.y))
+	return move_unit_to_mapv(dest_mapv)
+
+func can_move_to_mapv(dest_mapv) -> bool:
+	return Game.mapdata[dest_mapv].is_land == over_land or Game.mapdata[dest_mapv].is_water == over_water
 
 func move_unit_to_mapv(new_mapv: Vector2) -> bool:
 
+	# deactivate if turn over
+	if current_travel >= max_travel:
+		turn_over()
+		print("no more travel")
+		return false
+
 	if not Game.mapdata.has(new_mapv):
+		return false
+		
+	if not can_move_to_mapv(new_mapv):
 		return false
 
 	var old_mapv: Vector2 = current_mapv
 	var old_mapd: Dictionary = Game.mapdata[old_mapv]
 	var new_mapd: Dictionary = Game.mapdata[new_mapv]
-
-	# stop movement over land or water
-	if new_mapd.is_land != over_land and new_mapd.is_water != over_water:
-		return false
 
 	# remove from group
 	remove_from_group("mapv_" + str(old_mapv))
@@ -158,11 +191,6 @@ func move_unit_to_mapv(new_mapv: Vector2) -> bool:
 	# play sfx
 	if movement_sound:
 		movement_sound.play()
-
-	# deactivate if turn over
-	if current_travel > max_travel:
-		turn_over()
-		return false
 
 	return true
 
@@ -181,7 +209,7 @@ func put_at_mapv(mapv: Vector2) -> void:
 		# this mapv is explored
 		Game.mapdata[mapv].explored = true
 		
-		# these mapvs are now visible
+		# these mapvs are now visible but not explored
 		for x in range(mapv.x - visibility, mapv.x + visibility + 1):
 			for y in range(mapv.y - visibility, mapv.y + visibility + 1):
 				var wrapv = Game.map_wrap(Vector2(x, y))

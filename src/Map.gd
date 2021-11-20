@@ -88,7 +88,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if Input.is_action_just_released("ui_click"):
 		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
+
+		# deactive all units
+		for unit in get_tree().get_nodes_in_group("unit"):
+			unit.deactivate()
 		
+		# activate unit on this tile
 		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
 			unit.activate()
 
