@@ -1,7 +1,6 @@
 extends Node2D
 
 onready var map: Node2D = $Map
-onready var units: Node2D = $Map/Units
 
 const MAPSIZE_LARGE: Vector2 = Vector2(128, 128)
 const MAPSIZE_MEDIUM: Vector2 = Vector2(64, 64)
@@ -16,11 +15,11 @@ func _ready() -> void:
 	map.new_map(MAPSIZE_TEST)
 
 	# add unit to map
-	units.add_unit("transporter", map.random_sea_tile())
-	units.add_unit("caravan", map.random_land_tile())
-	units.add_unit("explorer", map.random_land_tile())
+	map.add_unit("caravan", map.random_land_tile())
+	map.add_unit("transporter", map.random_sea_tile())
+	map.add_unit("explorer", map.random_land_tile())
 
-
+	
 
 
 func _on_Button_pressed():

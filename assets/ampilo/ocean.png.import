@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/mountains.png-6a5bc5d841a1939661c99db420ac7e77.stex"
+path="res://.import/ocean.png-b86941b03bb91e1e2790d7f9b6f86892.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ampilo2/mountains.png"
-dest_files=[ "res://.import/mountains.png-6a5bc5d841a1939661c99db420ac7e77.stex" ]
+source_file="res://assets/ampilo/ocean.png"
+dest_files=[ "res://.import/ocean.png-b86941b03bb91e1e2790d7f9b6f86892.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://src/units/Unit.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/ampilo2/units.png" type="Texture" id=2]
+[ext_resource path="res://assets/ampilo/units.png" type="Texture" id=2]
 [ext_resource path="res://assets/sfx/foot3.ogg" type="AudioStream" id=3]
 
 [sub_resource type="AtlasTexture" id=1]
@@ -9,6 +9,7 @@ atlas = ExtResource( 2 )
 region = Rect2( 261, 50, 64, 48 )
 
 [node name="Caravan" groups=["caravan"] instance=ExtResource( 1 )]
+can_found_city = true
 max_travel = 2
 over_land = true
 visibility = 1

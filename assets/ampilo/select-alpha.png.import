@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/cities.png-d3c638ba29aa4b5c0c51cad2934d5af9.stex"
+path="res://.import/select-alpha.png-468035acc61d5b2a21aeda6e60181150.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ampilo2/cities.png"
-dest_files=[ "res://.import/cities.png-d3c638ba29aa4b5c0c51cad2934d5af9.stex" ]
+source_file="res://assets/ampilo/select-alpha.png"
+dest_files=[ "res://.import/select-alpha.png-468035acc61d5b2a21aeda6e60181150.stex" ]
 
 [params]
 

@@ -1,0 +1,77 @@
+class_name MapConstants
+
+# order is important
+enum TILE {
+
+	SHALLOW_OCEAN,
+	DEEP_OCEAN,
+	DESERT,
+	PLAINS,
+	GRASSLAND,
+	FOREST,
+	HILLS,
+	MOUNTAINS,
+	TUNDRA,
+	ARCTIC,
+	SWAMP,
+	JUNGLE,
+
+}
+
+# order is important
+enum TERRAIN2 {
+
+	SMALL_FOREST = 49
+	MEDIUM_FOREST
+	LARGE_FOREST
+
+}
+
+# order is important
+enum RESOURCE {
+
+	OASIS, # 0
+	OIL,
+	OILRIG
+	BUFFALO,
+	WHEAT,
+	IRIGATION,
+	PHEASENT,
+	SILK,
+	FARMLAND,
+	COAL,
+	WINE, # 10
+	MINING,
+	GOLD,
+	IRON,
+	POLLUTION,
+	TUNDRA_GAME,
+	FURS,
+	VILLAGE,
+	IVORY,
+	ARCTIC_OIL,
+	FALLOUT, # 20
+	PEAT,
+	SPICE,
+	OIL_PLATFORM,
+	GEMS,
+	FRUIT,
+	FISH,
+	WHALES,
+	SEALS,
+	FOREST_GAME,
+	HORSES, # 30
+	SHEILD
+
+}
+
+const NEIGHBOURS = [
+	Vector2.UP,
+	Vector2.UP + Vector2.RIGHT,
+	Vector2.RIGHT,
+	Vector2.DOWN + Vector2.RIGHT,
+	Vector2.DOWN,
+	Vector2.DOWN + Vector2.LEFT,
+	Vector2.LEFT,
+	Vector2.UP + Vector2.LEFT
+]

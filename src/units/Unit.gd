@@ -15,6 +15,9 @@ export var stealth: bool = false
 # freight
 export var capacity: int = 0
 
+# actions
+export var can_found_city: bool = false
+
 # value
 export var build_cost: int = 0
 export var support_cost: int = 0
@@ -54,6 +57,8 @@ func deactivate():
 	selector.visible = false
 	selector.playing = false
 	active = false
+	
+
 
 ####################################################################################################
 ## Turn
@@ -64,7 +69,6 @@ func turn_over():
 	timer.stop()
 
 func new_turn():
-	print("new turn")
 	can_move = true
 	current_travel = 0
 	
@@ -72,53 +76,13 @@ func new_turn():
 		timer.start()
 		explore_movement()
 
-####################################################################################################
-## UI CONTROLS
-
-func _unhandled_input(event: InputEvent) -> void:
-
-	if not active:
-		return
-
-	# move unit
-	if event.is_action_pressed("ui_left"):
-		move_unit_by_direction(Vector2.LEFT)
-
-	elif event.is_action_pressed("ui_right"):
-		move_unit_by_direction(Vector2.RIGHT)
-
-	elif event.is_action_pressed("ui_up"):
-		move_unit_by_direction(Vector2.UP)
-
-	elif event.is_action_pressed("ui_down"):
-		move_unit_by_direction(Vector2.DOWN)
-
-	elif event.is_action_pressed("unit_explore"):
-		current_state = State.EXPLORE
-		timer.start()
-		explore_movement()
-
-
 
 ####################################################################################################
 ## Movement
 
-const neighbours: Array = [
-	Vector2.UP,
-	Vector2.UP + Vector2.RIGHT,
-	Vector2.RIGHT,
-	Vector2.DOWN + Vector2.RIGHT,
-	Vector2.DOWN,
-	Vector2.DOWN + Vector2.LEFT,
-	Vector2.LEFT,
-	Vector2.UP + Vector2.LEFT
-]
-
 func explore_movement() -> void:
 	
-	neighbours.shuffle()
-	
-	for n in neighbours:
+	for n in MapConstants.NEIGHBOURS:
 		
 		if not can_move:
 			return
@@ -141,26 +105,26 @@ func explore_movement() -> void:
 			continue
 		
 		# end if movement successfuk
-		if move_unit_to_mapv(neighbour_mapv):
+		if move_to_mapv(neighbour_mapv):
 			return
 	
 	# cant move anyway
 	current_state = State.IDLE
 	
 
-func move_unit_by_direction(direction: Vector2) -> bool:
+func move_by_direction(direction: Vector2) -> bool:
 	
 	if not can_move:
 		return false
 		
 	var dest_mapv = Vector2(wrapi(current_mapv.x + direction.x, 0, Game.mapsize.x), current_mapv.y + direction.y)
 	
-	return move_unit_to_mapv(dest_mapv)
+	return move_to_mapv(dest_mapv)
 
 func can_move_to_mapv(dest_mapv) -> bool:
 	return Game.mapdata[dest_mapv].is_land == over_land or Game.mapdata[dest_mapv].is_water == over_water
 
-func move_unit_to_mapv(new_mapv: Vector2) -> bool:
+func move_to_mapv(new_mapv: Vector2) -> bool:
 
 	# deactivate if turn over
 	if current_travel >= max_travel:
@@ -176,7 +140,6 @@ func move_unit_to_mapv(new_mapv: Vector2) -> bool:
 
 	var old_mapv: Vector2 = current_mapv
 	var old_mapd: Dictionary = Game.mapdata[old_mapv]
-	var new_mapd: Dictionary = Game.mapdata[new_mapv]
 
 	# remove from group
 	remove_from_group("mapv_" + str(old_mapv))

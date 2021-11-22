@@ -1,12 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://assets/ampilo2/terrain.tres" type="TileSet" id=2]
-[ext_resource path="res://assets/ampilo2/terrain2.tres" type="TileSet" id=3]
+[ext_resource path="res://assets/ampilo/terrain.tres" type="TileSet" id=2]
+[ext_resource path="res://assets/ampilo/terrain2.tres" type="TileSet" id=3]
 [ext_resource path="res://src/MainCamera.gd" type="Script" id=4]
 [ext_resource path="res://src/World.gd" type="Script" id=5]
-[ext_resource path="res://assets/ampilo2/resources.tres" type="TileSet" id=6]
-[ext_resource path="res://src/Units.gd" type="Script" id=7]
-[ext_resource path="res://src/Map.gd" type="Script" id=8]
+[ext_resource path="res://assets/ampilo/resources.tres" type="TileSet" id=6]
+[ext_resource path="res://src/map/Map.gd" type="Script" id=8]
 
 [node name="Main" type="Node"]
 
@@ -42,7 +41,6 @@ cell_size = Vector2( 96, 48 )
 format = 1
 
 [node name="Units" type="Node2D" parent="World/Map"]
-script = ExtResource( 7 )
 
 [node name="Cities" type="Node2D" parent="World/Map"]
 

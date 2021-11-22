@@ -1,8 +1,8 @@
 [gd_resource type="TileSet" load_steps=4 format=2]
 
-[ext_resource path="res://assets/ampilo2/hills.png" type="Texture" id=1]
-[ext_resource path="res://assets/ampilo2/mountains.png" type="Texture" id=2]
-[ext_resource path="res://assets/ampilo2/terrain2.png" type="Texture" id=3]
+[ext_resource path="res://assets/ampilo/hills.png" type="Texture" id=1]
+[ext_resource path="res://assets/ampilo/mountains.png" type="Texture" id=2]
+[ext_resource path="res://assets/ampilo/terrain2.png" type="Texture" id=3]
 
 [resource]
 0/name = "hills.png 0"

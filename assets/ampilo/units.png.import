@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/terrain2.png-fa05a94efffb570f35804bbaa6d64f7c.stex"
+path="res://.import/units.png-3ca5a116e8440be68f39c4511cd0d960.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ampilo2/terrain2.png"
-dest_files=[ "res://.import/terrain2.png-fa05a94efffb570f35804bbaa6d64f7c.stex" ]
+source_file="res://assets/ampilo/units.png"
+dest_files=[ "res://.import/units.png-3ca5a116e8440be68f39c4511cd0d960.stex" ]
 
 [params]
 

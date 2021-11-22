@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hills.png-d7ea9165066a26836deccc06dc62b032.stex"
+path="res://.import/hills.png-3e8e71da59ff6331e02539a3960e18d1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ampilo2/hills.png"
-dest_files=[ "res://.import/hills.png-d7ea9165066a26836deccc06dc62b032.stex" ]
+source_file="res://assets/ampilo/hills.png"
+dest_files=[ "res://.import/hills.png-3e8e71da59ff6331e02539a3960e18d1.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true

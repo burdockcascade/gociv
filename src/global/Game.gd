@@ -18,5 +18,6 @@ func reset() -> void:
 	landnav = AStar2D.new()
 	waternav = AStar2D.new()
 
+
 func map_wrap(pos: Vector2):
 	return Vector2(wrapi(pos.x, 0, Game.mapsize.x), pos.y)
