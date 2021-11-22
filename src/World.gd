@@ -19,7 +19,8 @@ func _ready() -> void:
 	var startpos = map.get_player_start_location()
 	
 	# add unit to map
-	var unit = map.add_unit("explorer", startpos)
+	var unit = map.add_unit("caravan", startpos, true)
+
 	
 	camera.position = unit.position
 	

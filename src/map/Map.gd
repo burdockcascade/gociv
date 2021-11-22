@@ -20,7 +20,8 @@ func _ready() -> void:
 func new_map(size: Vector2) -> void:
 
 	# generate map
-	worldmap = NoiseMapGen.new().generate(size)
+	var nmg = NoiseMapGen.new()
+	worldmap = nmg.generate(size)
 	
 	draw_map()
 
@@ -29,28 +30,7 @@ func new_map(size: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 
-	if Input.is_action_just_released("ui_click"):
-		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
-
-		# deactive all units
-		for unit in get_tree().get_nodes_in_group("unit"):
-			unit.deactivate()
-		
-		# activate unit on this tile
-		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
-			active_unit = unit
-			unit.activate()
-
-	# move map
-	elif event.is_action_pressed("map_scroll_left"):
-		scroll_map(Vector2.LEFT)
-	elif event.is_action_pressed("map_scroll_right"):
-		scroll_map(Vector2.RIGHT)
-	elif event.is_action_pressed("cheat_see_all_map"):
-		cheat_see_all_map()
-
-
-	elif active_unit:
+	if active_unit:
 
 		# move unit
 		if event.is_action_pressed("ui_left"):
@@ -72,9 +52,34 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.is_action_pressed("unit_action_build") and active_unit.can_found_city:
 			print("build!")
 			
+		elif event.is_action_pressed("unit_action_disbanden"):
+			active_unit.queue_free()
+			active_unit = null
+			
 		elif event.is_action_pressed("ui_cancel"):
-			for unit in get_tree().get_nodes_in_group("unit"):
-				unit.deactivate()
+			active_unit.deactivate()
+			active_unit = null
+			
+			
+	elif Input.is_action_just_released("ui_click"):
+		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
+
+		# deactive all units
+		for unit in get_tree().get_nodes_in_group("unit"):
+			unit.deactivate()
+		
+		# activate unit on this tile
+		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
+			active_unit = unit
+			unit.activate()
+
+	# move map
+	elif event.is_action_pressed("map_scroll_left"):
+		scroll_map(Vector2.LEFT)
+	elif event.is_action_pressed("map_scroll_right"):
+		scroll_map(Vector2.RIGHT)
+	elif event.is_action_pressed("cheat_see_all_map"):
+		cheat_see_all_map()
 
 ####################################################################################################
 ## CHEATS / DEBUG
@@ -155,7 +160,7 @@ const unit = {
 
 }
 
-func add_unit(id: String, mapv: Vector2) -> Node2D:
+func add_unit(id: String, mapv: Vector2, is_active: bool = false) -> Node2D:
 
 	var u: Node2D = load(unit[id].scene).instance()
 
@@ -167,6 +172,10 @@ func add_unit(id: String, mapv: Vector2) -> Node2D:
 
 	# add
 	units.add_child(u)
+	
+	if is_active:
+		u.activate()
+		active_unit = u
 
 	return u
 
