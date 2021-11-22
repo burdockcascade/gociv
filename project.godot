@@ -9,19 +9,25 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Reference",
-"class": "MapConstants",
+"base": "Node2D",
+"class": "Map",
 "language": "GDScript",
-"path": "res://src/map/MapConstants.gd"
+"path": "res://src/map/Map.gd"
 }, {
 "base": "Reference",
 "class": "NoiseMapGen",
 "language": "GDScript",
 "path": "res://src/map/NoiseMapGen.gd"
+}, {
+"base": "Reference",
+"class": "WorldMap",
+"language": "GDScript",
+"path": "res://src/map/WorldMap.gd"
 } ]
 _global_script_class_icons={
-"MapConstants": "",
-"NoiseMapGen": ""
+"Map": "",
+"NoiseMapGen": "",
+"WorldMap": ""
 }
 
 [application]
@@ -31,7 +37,6 @@ run/main_scene="res://src/Main.tscn"
 
 [autoload]
 
-Game="*res://src/global/Game.gd"
 Events="*res://src/global/Events.gd"
 
 [debug]

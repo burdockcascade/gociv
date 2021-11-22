@@ -1,4 +1,5 @@
 extends Node2D
+class_name Map
 
 onready var terrain: TileMap = $Terrain
 onready var terrain2: TileMap = $Terrain2
@@ -6,6 +7,8 @@ onready var resources: TileMap = $Resources
 onready var units: Node2D = $Units
 
 var active_unit: Node2D
+
+var worldmap: WorldMap
 
 ####################################################################################################
 ## Ready
@@ -16,11 +19,8 @@ func _ready() -> void:
 
 func new_map(size: Vector2) -> void:
 
-	Game.mapsize = size
-
 	# generate map
-	var mapgen = NoiseMapGen.new()
-	Game.mapdata = mapgen.generate(size)
+	worldmap = NoiseMapGen.new().generate(size)
 	
 	draw_map()
 
@@ -81,7 +81,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func cheat_see_all_map() -> void:
 	prints("CHEAT", "Show All Map")
-	for mapd in Game.mapdata.values():
+	for mapd in worldmap.data.values():
 		mapd.visible = true
 		
 	draw_map()
@@ -92,8 +92,8 @@ func cheat_see_all_map() -> void:
 func scroll_map(direction: Vector2) -> void:
 	
 	# update mapv with new cellv
-	for mapd in Game.mapdata.values():
-		mapd.cellv.x = wrapi(mapd.cellv.x + direction.x, 0, Game.mapsize.x)
+	for mapd in worldmap.data.values():
+		mapd.cellv = worldmap.wrap(mapd.cellv + direction)
 	
 	# update tiles with new position
 	draw_map()
@@ -109,9 +109,8 @@ func draw_map() -> void:
 	resources.clear()
 
 	# paint map
-	for mapv in Game.mapdata:
+	for mapd in worldmap.data.values():
 
-		var mapd: Dictionary = Game.mapdata[mapv]
 		var cellv: Vector2 = mapd.cellv
 
 		# update world position for mapv
@@ -133,7 +132,11 @@ func draw_map() -> void:
 		# paint fog
 	
 
+####################################################################################################
+## Player
 
+func get_player_start_location() -> Vector2:
+	return worldmap.random_land_tile()
 
 ####################################################################################################
 ## Units
@@ -156,6 +159,10 @@ func add_unit(id: String, mapv: Vector2) -> Node2D:
 
 	var u: Node2D = load(unit[id].scene).instance()
 
+	# set worldmap.data
+	u.worldmap = worldmap
+
+	# position
 	u.put_at_mapv(mapv)
 
 	# add
@@ -163,27 +170,4 @@ func add_unit(id: String, mapv: Vector2) -> Node2D:
 
 	return u
 
-####################################################################################################
-## PUBLIC FUNCTIONS
-
-func any_random_tile() -> Vector2:
-	return _find_random_tile(true, true)
-
-func random_land_tile() -> Vector2:
-	return _find_random_tile(true, false)
-
-func random_sea_tile() -> Vector2:
-	return _find_random_tile(false, true)
-
-func _find_random_tile(land: bool, water: bool) -> Vector2:
-	
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.randomize()
-	
-	while true:
-		var v = Vector2(rng.randi_range(0, Game.mapsize.x-1), rng.randi_range(1, Game.mapsize.y-2))
-		if Game.mapdata[v].is_land == land and Game.mapdata[v].is_water == water:
-			return v
-
-	return Vector2.ONE
 

@@ -38,6 +38,8 @@ var current_travel: int = 0
 
 var active: bool = false
 
+var worldmap: WorldMap
+
 ####################################################################################################
 ## Unit
 
@@ -82,18 +84,15 @@ func new_turn():
 
 func explore_movement() -> void:
 	
-	for n in MapConstants.NEIGHBOURS:
+	for n in WorldMap.NEIGHBOURS:
 		
 		if not can_move:
 			return
 
-		var neighbour_mapv = current_mapv + n
-		
-		# wrap
-		neighbour_mapv = Vector2(wrapi(neighbour_mapv.x, 0, Game.mapsize.x), neighbour_mapv.y)
+		var neighbour_mapv = worldmap.wrap(current_mapv + n)
 		
 		# skip if mapv doesn't exist
-		if not Game.mapdata.has(neighbour_mapv):
+		if not worldmap.data.has(neighbour_mapv):
 			continue
 		
 		# skip if cant move to tile
@@ -101,7 +100,7 @@ func explore_movement() -> void:
 			continue
 		
 		# skip if explored
-		if Game.mapdata[neighbour_mapv].explored:
+		if worldmap.data[neighbour_mapv].explored:
 			continue
 		
 		# end if movement successfuk
@@ -117,12 +116,12 @@ func move_by_direction(direction: Vector2) -> bool:
 	if not can_move:
 		return false
 		
-	var dest_mapv = Vector2(wrapi(current_mapv.x + direction.x, 0, Game.mapsize.x), current_mapv.y + direction.y)
+	var dest_mapv = worldmap.wrap(current_mapv + direction)
 	
 	return move_to_mapv(dest_mapv)
 
 func can_move_to_mapv(dest_mapv) -> bool:
-	return Game.mapdata[dest_mapv].is_land == over_land or Game.mapdata[dest_mapv].is_water == over_water
+	return worldmap.data[dest_mapv].is_land == over_land or worldmap.data[dest_mapv].is_water == over_water
 
 func move_to_mapv(new_mapv: Vector2) -> bool:
 
@@ -131,15 +130,12 @@ func move_to_mapv(new_mapv: Vector2) -> bool:
 		turn_over()
 		print("no more travel")
 		return false
-
-	if not Game.mapdata.has(new_mapv):
-		return false
 		
 	if not can_move_to_mapv(new_mapv):
 		return false
 
 	var old_mapv: Vector2 = current_mapv
-	var old_mapd: Dictionary = Game.mapdata[old_mapv]
+	var old_mapd: Dictionary = worldmap.data[old_mapv]
 
 	# remove from group
 	remove_from_group("mapv_" + str(old_mapv))
@@ -160,33 +156,31 @@ func move_to_mapv(new_mapv: Vector2) -> bool:
 func put_at_mapv(mapv: Vector2) -> void:
 	
 	# wrap if outside map boundary
-	mapv = Game.map_wrap(mapv)
+	mapv = worldmap.wrap(mapv)
 	
 	# set position of unit
 	current_mapv = mapv
 	draw_unit()
 	
 	# update map if newly explored
-	if not Game.mapdata[mapv].explored:
+	if not worldmap.data[mapv].explored:
 		
 		# this mapv is explored
-		Game.mapdata[mapv].explored = true
+		worldmap.data[mapv].explored = true
 		
 		# these mapvs are now visible but not explored
 		for x in range(mapv.x - visibility, mapv.x + visibility + 1):
 			for y in range(mapv.y - visibility, mapv.y + visibility + 1):
-				var wrapv = Game.map_wrap(Vector2(x, y))
-				if Game.mapdata.has(wrapv):
-					Game.mapdata[wrapv].visible = true
+				var wrapv = worldmap.wrap(Vector2(x, y))
+				if worldmap.data.has(wrapv):
+					worldmap.data[wrapv].visible = true
 		
 		# redraw map
 		Events.emit_signal("map_updated")
 
 	# add to group
 	add_to_group("mapv_" + str(mapv))
-	Game.mapdata[mapv].units.append(self)
+	worldmap.data[mapv].units.append(self)
 	
 func draw_unit() -> void:
-	position = Game.mapdata[current_mapv].worldv
-
-
+	position = worldmap.data[current_mapv].worldv

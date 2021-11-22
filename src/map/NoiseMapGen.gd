@@ -9,15 +9,14 @@ enum HEIGHT {
 }
 
 var tile_height: Dictionary = {
-	HEIGHT.DEEP_SEA : MapConstants.TILE.SHALLOW_OCEAN,
-	HEIGHT.SHALLOW_OCEAN : MapConstants.TILE.SHALLOW_OCEAN,
-	HEIGHT.FLATLAND : MapConstants.TILE.GRASSLAND,
-	HEIGHT.HILL : MapConstants.TILE.HILLS,
-	HEIGHT.MOUNTAIN : MapConstants.TILE.MOUNTAINS
+	HEIGHT.DEEP_SEA : WorldMap.TILE.SHALLOW_OCEAN,
+	HEIGHT.SHALLOW_OCEAN : WorldMap.TILE.SHALLOW_OCEAN,
+	HEIGHT.FLATLAND : WorldMap.TILE.GRASSLAND,
+	HEIGHT.HILL : WorldMap.TILE.HILLS,
+	HEIGHT.MOUNTAIN : WorldMap.TILE.MOUNTAINS
 }
 
-var mapdata: Dictionary = {}
-var mapsize: Vector2
+var worldmap: WorldMap
 
 ####################################################################################################
 ## MAP GENERATOR
@@ -25,9 +24,11 @@ var mapsize: Vector2
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 
-func generate(dim: Vector2) -> Dictionary:
+func generate(dim: Vector2) -> WorldMap:
 	
-	mapsize = dim
+	worldmap = WorldMap.new()
+	
+	worldmap.dimension = dim
 	
 	randomize()
 	
@@ -80,24 +81,24 @@ func generate(dim: Vector2) -> Dictionary:
 
 			# set tundra
 #			if (y < 3 or y > dim.x-3):
-#				cd.tile = MapConstants.TILE.TUNDRA
+#				cd.tile = WorldMap.TILE.TUNDRA
 
 			# set ice caps
 			if y == 0 or y == dim.y-1:
-				mapd.tile = MapConstants.TILE.ARCTIC
+				mapd.tile = WorldMap.TILE.ARCTIC
 
 
 			# set hills & mountains
-			if mapd.height == HEIGHT.HILL and mapd.tile != MapConstants.TILE.ARCTIC:
+			if mapd.height == HEIGHT.HILL and mapd.tile != WorldMap.TILE.ARCTIC:
 				mapd.terrain2 = 0
 				mapd.travel_cost = 1
-			elif mapd.height == HEIGHT.MOUNTAIN and mapd.tile != MapConstants.TILE.ARCTIC:
-				mapd.terrain2 = MapConstants.RESOURCE.TUNDRA_GAME
-			elif mapd.tile == MapConstants.TILE.FOREST:
+			elif mapd.height == HEIGHT.MOUNTAIN and mapd.tile != WorldMap.TILE.ARCTIC:
+				mapd.terrain2 = WorldMap.RESOURCE.TUNDRA_GAME
+			elif mapd.tile == WorldMap.TILE.FOREST:
 				mapd.terrain2 = add_random_trees(v)
 
 			# is water tile
-			mapd.is_water = (mapd.tile == MapConstants.TILE.DEEP_OCEAN) or (mapd.tile == MapConstants.TILE.SHALLOW_OCEAN)
+			mapd.is_water = (mapd.tile == WorldMap.TILE.DEEP_OCEAN) or (mapd.tile == WorldMap.TILE.SHALLOW_OCEAN)
 
 			# is land tile
 			mapd.is_land = !mapd.is_water
@@ -105,22 +106,22 @@ func generate(dim: Vector2) -> Dictionary:
 			# resources
 			mapd.resource = add_random_resource(v, mapd.tile)
 
-			mapdata[v] = mapd
+			worldmap.data[v] = mapd
 			
-	return mapdata
+	return worldmap
 
 
 func select_random_green_tile(v: Vector2) -> int:
 
-	var t: int = MapConstants.TILE.GRASSLAND
+	var t: int = WorldMap.TILE.GRASSLAND
 
 	# random tile assignment
 	match rng.randi_range(1, 12):
-		1,2,3: t = MapConstants.TILE.PLAINS
-		4,5,6: t = MapConstants.TILE.FOREST
-		8: t = MapConstants.TILE.JUNGLE
-		9: if tile_has_sea_access(v): t = MapConstants.TILE.SWAMP
-		10: if tile_in_middle_third(v): t = MapConstants.TILE.DESERT
+		1,2,3: t = WorldMap.TILE.PLAINS
+		4,5,6: t = WorldMap.TILE.FOREST
+		8: t = WorldMap.TILE.JUNGLE
+		9: if worldmap.tile_has_sea_access(v): t = WorldMap.TILE.SWAMP
+		10: if worldmap.tile_in_middle_third(v): t = WorldMap.TILE.DESERT
 
 	return t
 
@@ -129,9 +130,9 @@ func add_random_trees(_v: Vector2) -> int:
 	var t: int = -1
 
 	match rng.randi_range(1, 3):
-		1: t = MapConstants.TERRAIN2.SMALL_FOREST
-		2: t = MapConstants.TERRAIN2.MEDIUM_FOREST
-		3: t = MapConstants.TERRAIN2.LARGE_FOREST
+		1: t = WorldMap.TERRAIN2.SMALL_FOREST
+		2: t = WorldMap.TERRAIN2.MEDIUM_FOREST
+		3: t = WorldMap.TERRAIN2.LARGE_FOREST
 
 	return t
 
@@ -143,81 +144,55 @@ func add_random_resource(v: Vector2, t: int) -> int:
 	# set resources
 	match t:
 
-		MapConstants.TILE.TUNDRA:
+		WorldMap.TILE.TUNDRA:
 			match rng.randi_range(1, 100):
-				1: r = MapConstants.RESOURCE.TUNDRA_GAME
-				2: r = MapConstants.RESOURCE.ARCTIC_OIL
-				3: r = MapConstants.RESOURCE.SEALS
-				4: r = MapConstants.RESOURCE.IVORY
-				5: r = MapConstants.RESOURCE.FURS
+				1: r = WorldMap.RESOURCE.TUNDRA_GAME
+				2: r = WorldMap.RESOURCE.ARCTIC_OIL
+				3: r = WorldMap.RESOURCE.SEALS
+				4: r = WorldMap.RESOURCE.IVORY
+				5: r = WorldMap.RESOURCE.FURS
 
-		MapConstants.TILE.PLAINS, MapConstants.TILE.GRASSLAND:
+		WorldMap.TILE.PLAINS, WorldMap.TILE.GRASSLAND:
 			match rng.randi_range(1, 80):
-				1: r = MapConstants.RESOURCE.HORSES
-				2: r = MapConstants.RESOURCE.BUFFALO
-				3: r = MapConstants.RESOURCE.WHEAT
-				4: r = MapConstants.RESOURCE.SHEILD
-				5: r = MapConstants.RESOURCE.VILLAGE
+				1: r = WorldMap.RESOURCE.HORSES
+				2: r = WorldMap.RESOURCE.BUFFALO
+				3: r = WorldMap.RESOURCE.WHEAT
+				4: r = WorldMap.RESOURCE.SHEILD
+				5: r = WorldMap.RESOURCE.VILLAGE
 
-		MapConstants.TILE.FOREST:
+		WorldMap.TILE.FOREST:
 			match rng.randi_range(1, 30):
-				1: r = MapConstants.RESOURCE.SILK
-				2: r = MapConstants.RESOURCE.VILLAGE
+				1: r = WorldMap.RESOURCE.SILK
+				2: r = WorldMap.RESOURCE.VILLAGE
 
-		MapConstants.TILE.DESERT:
+		WorldMap.TILE.DESERT:
 			match rng.randi_range(1, 30):
-				1: r = MapConstants.RESOURCE.OIL
-				2: r = MapConstants.RESOURCE.OASIS
+				1: r = WorldMap.RESOURCE.OIL
+				2: r = WorldMap.RESOURCE.OASIS
 
-		MapConstants.TILE.HILLS:
+		WorldMap.TILE.HILLS:
 			match rng.randi_range(1, 20):
-				3: r = MapConstants.RESOURCE.COAL
-				4: r = MapConstants.RESOURCE.WINE
+				3: r = WorldMap.RESOURCE.COAL
+				4: r = WorldMap.RESOURCE.WINE
 
-		MapConstants.TILE.MOUNTAINS:
+		WorldMap.TILE.MOUNTAINS:
 			match rng.randi_range(1, 10):
-				1: r = MapConstants.RESOURCE.GOLD
-				2: r = MapConstants.RESOURCE.IRON
-				3: r = MapConstants.RESOURCE.COAL
-				4: r = MapConstants.RESOURCE.GEMS
+				1: r = WorldMap.RESOURCE.GOLD
+				2: r = WorldMap.RESOURCE.IRON
+				3: r = WorldMap.RESOURCE.COAL
+				4: r = WorldMap.RESOURCE.GEMS
 
-		MapConstants.TILE.SHALLOW_OCEAN:
+		WorldMap.TILE.SHALLOW_OCEAN:
 			match rng.randi_range(1, 100):
-				1:  r = MapConstants.RESOURCE.FISH
-				2:  r = MapConstants.RESOURCE.WHALES
+				1:  r = WorldMap.RESOURCE.FISH
+				2:  r = WorldMap.RESOURCE.WHALES
 
-		MapConstants.TILE.JUNGLE:
+		WorldMap.TILE.JUNGLE:
 			match rng.randi_range(1, 10):
-				1: r = MapConstants.RESOURCE.SPICE
+				1: r = WorldMap.RESOURCE.SPICE
 
-		MapConstants.TILE.SWAMP:
+		WorldMap.TILE.SWAMP:
 			match rng.randi_range(1, 10):
-				1: r = MapConstants.RESOURCE.PEAT
+				1: r = WorldMap.RESOURCE.PEAT
 
 	return r
-
-####################################################################################################
-## HELPER FUNCTIONS
-
-func tile_has_land_access(v: Vector2) -> bool:
-	for n in MapConstants.NEIGHBOURS:
-		if mapdata.has(v + n) and mapdata[v + n].is_land:
-			return true
-
-	return false
-
-func tile_has_sea_access(v: Vector2) -> bool:
-	for n in MapConstants.NEIGHBOURS:
-		if mapdata.has(v + n) and mapdata[v + n].is_water:
-			return true
-
-	return false
-
-func tile_in_top_third(v: Vector2) -> bool:
-	return v.y < mapsize.y/3
-
-func tile_in_lower_third(v) -> bool:
-	return v.y > (mapsize.y/3) * 2
-
-func tile_in_middle_third(v) -> bool:
-	return !tile_in_top_third(v) and !tile_in_lower_third(v)

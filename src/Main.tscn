@@ -9,15 +9,14 @@
 
 [node name="Main" type="Node"]
 
-[node name="MainCamera" type="Camera2D" parent="."]
-anchor_mode = 0
+[node name="World" type="Node2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="MainCamera" type="Camera2D" parent="World"]
 current = true
 script = ExtResource( 4 )
 min_zoom = 1.0
 zoom_increment = 0.1
-
-[node name="World" type="Node2D" parent="."]
-script = ExtResource( 5 )
 
 [node name="Map" type="Node2D" parent="World"]
 script = ExtResource( 8 )

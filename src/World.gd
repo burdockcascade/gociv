@@ -1,5 +1,6 @@
 extends Node2D
 
+onready var camera: Camera2D = $MainCamera
 onready var map: Node2D = $Map
 
 const MAPSIZE_LARGE: Vector2 = Vector2(128, 128)
@@ -13,11 +14,16 @@ func _ready() -> void:
 
 	# generate map
 	map.new_map(MAPSIZE_TEST)
-
+	
+	# start position for player
+	var startpos = map.get_player_start_location()
+	
 	# add unit to map
-	map.add_unit("caravan", map.random_land_tile())
-	map.add_unit("transporter", map.random_sea_tile())
-	map.add_unit("explorer", map.random_land_tile())
+	var unit = map.add_unit("explorer", startpos)
+	
+	camera.position = unit.position
+	
+	
 
 	
 
