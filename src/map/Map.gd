@@ -30,7 +30,27 @@ func new_map(size: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 
-	if active_unit:
+	if Input.is_action_just_released("ui_click"):
+		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
+
+		# deactive all units
+		for unit in get_tree().get_nodes_in_group("unit"):
+			unit.deactivate()
+		
+		# activate unit on this tile
+		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
+			active_unit = unit
+			unit.activate()
+
+	# move map
+	elif event.is_action_pressed("map_scroll_left"):
+		scroll_map(Vector2.LEFT)
+	elif event.is_action_pressed("map_scroll_right"):
+		scroll_map(Vector2.RIGHT)
+	elif event.is_action_pressed("cheat_see_all_map"):
+		cheat_see_all_map()
+
+	elif active_unit:
 
 		# move unit
 		if event.is_action_pressed("ui_left"):
@@ -61,25 +81,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			active_unit = null
 			
 			
-	elif Input.is_action_just_released("ui_click"):
-		var mapv: Vector2 = terrain.world_to_map(get_global_mouse_position())
 
-		# deactive all units
-		for unit in get_tree().get_nodes_in_group("unit"):
-			unit.deactivate()
-		
-		# activate unit on this tile
-		for unit in get_tree().get_nodes_in_group("mapv_" + str(mapv)):
-			active_unit = unit
-			unit.activate()
-
-	# move map
-	elif event.is_action_pressed("map_scroll_left"):
-		scroll_map(Vector2.LEFT)
-	elif event.is_action_pressed("map_scroll_right"):
-		scroll_map(Vector2.RIGHT)
-	elif event.is_action_pressed("cheat_see_all_map"):
-		cheat_see_all_map()
 
 ####################################################################################################
 ## CHEATS / DEBUG
